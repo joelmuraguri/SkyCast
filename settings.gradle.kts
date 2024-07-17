@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "SkyCast"
 include(":app")
+include(":core:network")
