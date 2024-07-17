@@ -27,6 +27,7 @@ turbine = "1.1.0"
 androidxArchCore = "2.2.0"
 androidxTracing = "1.3.0-alpha02"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
+room = "2.6.1"
 
 
 [libraries]
@@ -65,6 +66,11 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "androidxArchCore" }
 androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "androidxComposeRuntimeTracing" }
 androidx-tracing-ktx = { group = "androidx.tracing", name = "tracing-ktx", version.ref = "androidxTracing" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-testing = { group ="androidx.room", name= "room-testing", version.ref="room"}
+room-paging = {group="androidx.room", name="room-paging", version.ref="room"}
 
 
 [plugins]
