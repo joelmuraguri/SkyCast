@@ -1,6 +1,7 @@
 package com.joel.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.joel.network.BuildConfig
 import com.joel.network.client.WeatherClient
 import com.joel.network.service.WeatherService
 import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory

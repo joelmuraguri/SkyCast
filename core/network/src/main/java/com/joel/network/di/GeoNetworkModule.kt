@@ -1,6 +1,7 @@
 package com.joel.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.joel.network.BuildConfig
 import com.joel.network.client.GeoClient
 import com.joel.network.service.GeoService
 import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory

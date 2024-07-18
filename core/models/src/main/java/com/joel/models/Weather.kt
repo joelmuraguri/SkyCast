@@ -29,6 +29,6 @@ data class Weather(
 }
 
 data class Location(
-    val longitude : Long,
-    val latitude : Long
+    val longitude : Double,
+    val latitude : Double
 )
