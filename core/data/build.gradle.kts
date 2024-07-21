@@ -57,5 +57,8 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
+    // Location Services
+    implementation(libs.play.services.location)
+
 
 }
