@@ -13,7 +13,7 @@ interface FavouriteDao {
     suspend fun insertFavourite(favouritePlace: FavouritePlace)
 
     @Query("SELECT * FROM favourite_place")
-    fun getFavourites(locationName: String): List<Flow<FavouritePlace>>
+    fun getFavourites(): Flow<List<FavouritePlace>>
 
     @Query("DELETE FROM favourite_place WHERE locationName = :locationName")
     suspend fun deleteFavourites(locationName: String)

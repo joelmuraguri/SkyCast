@@ -15,14 +15,14 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 internal interface DataModule {
-
-    @Provides
-    fun providesContext(@ApplicationContext context: Context): Context = context
+//    @Provides
+//    fun providesContext(
+//        @ApplicationContext context: Context,
+//    ): Context = context
 
     @Binds
-    fun bindsConnectivityRepository(connectivityRepo : DefaultConnectivityObserver): ConnectivityObserver
+    fun bindsConnectivityRepository(connectivityRepo: DefaultConnectivityObserver): ConnectivityObserver
 
     @Binds
     fun bindsForecastRepository(forecastRepositoryImpl: ForecastRepositoryImpl): ForecastRepository
-
 }

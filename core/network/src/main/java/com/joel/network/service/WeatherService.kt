@@ -8,8 +8,8 @@ import retrofit2.http.Query
 interface WeatherService {
     @GET("forecast")
     suspend fun forecast(
-        @Query("latitude") latitude : Long,
-        @Query("longitude") longitude : Long,
+        @Query("latitude") latitude : Double,
+        @Query("longitude") longitude : Double,
         @Query("hourly") hourly : List<String> = hourlyParams,
         @Query("forecast_days") forecastDays: Int = 7,
         @Query("daily") daily : List<String> = dailyParams

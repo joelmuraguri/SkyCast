@@ -9,7 +9,7 @@ import com.joel.database.entity.WeatherEntity
 
 @Database(
     entities = [WeatherEntity::class, FavouritePlace::class],
-    version = 1
+    version = 1, exportSchema = false
 )
 abstract class SkyCastDatabase : RoomDatabase() {
     abstract fun foreCastDao() : ForecastDao

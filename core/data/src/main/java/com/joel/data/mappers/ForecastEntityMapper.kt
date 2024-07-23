@@ -18,7 +18,8 @@ object ForecastEntityMapper : EntityMapper<WeatherEntity, ForecastResponse>{
             longitude = response.longitude,
             latitude = response.latitude,
             dailyForecast = Json.encodeToString(dailyForecast),
-            hourlyForecast = Json.encodeToString(hourlyForecast)
+            hourlyForecast = Json.encodeToString(hourlyForecast),
+            timeStamp = 0L
         )
     }
 }

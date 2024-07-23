@@ -10,7 +10,8 @@ data class WeatherEntity(
     val longitude: Double,
     val latitude: Double,
     val dailyForecast: String, // JSON String of List<Weather.Daily>
-    val hourlyForecast: String // JSON String of List<Weather.Hourly>
+    val hourlyForecast: String, // JSON String of List<Weather.Hourly>
+    val timeStamp : Long
 )
 
 @Serializable

@@ -8,7 +8,7 @@ import javax.inject.Inject
 class WeatherClient @Inject constructor(
     private val service: WeatherService
 ) {
-    suspend fun forecast(latitude : Long, longitude : Long) : ApiResponse<ForecastResponse>{
+    suspend fun forecast(latitude : Double, longitude : Double) : ApiResponse<ForecastResponse>{
         return service.forecast(latitude, longitude)
     }
 }
