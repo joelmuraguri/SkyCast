@@ -4,7 +4,7 @@ import androidx.annotation.WorkerThread
 import com.joel.data.mappers.asDomain
 import com.joel.database.dao.ForecastDao
 import com.joel.models.Location
-import com.joel.models.Weather
+import com.joel.models.WeatherDomain
 import com.joel.network.Dispatcher
 import com.joel.network.SkyCastDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
@@ -27,7 +27,7 @@ class ForecastRepositoryImpl @Inject constructor(
         onStart: () -> Unit,
         onComplete: () -> Unit,
         onError: (String?) -> Unit
-    )  : Flow<Weather> = flow{
+    )  : Flow<WeatherDomain> = flow{
         try {
             val weatherEntity = withContext(ioDispatcher) {
                 forecastDao.getWeather()

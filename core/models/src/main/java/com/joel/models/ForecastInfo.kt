@@ -1,25 +1,26 @@
 package com.joel.models
 
-data class Weather(
+
+data class ForecastInfo(
     val location : Location,
-    val dailyForeCast : List<Daily>,
-    val hourlyForecast : List<Hourly>,
+    val dailyForeCast : List<DailyForecast>,
+    val hourlyForecast : List<HourlyForecast>,
     val name : String,
 ){
-    data class Daily(
+    data class DailyForecast(
         val uv: Int,
         val date : String,
-        val weather : Int,
+        val weather : WeatherType,
         val lowTemp : Int,
         val highTemp : Int,
         val sunrise : String,
         val sunset : String
     )
 
-    data class Hourly(
+    data class HourlyForecast(
         val time : String,
         val temp : String,
-        val weather : Int,
+        val weather : WeatherType,
         val wind : Int,
         val pressure : Int,
         val visibility: Int,
@@ -27,8 +28,3 @@ data class Weather(
         val humidity : Int
     )
 }
-
-data class Location(
-    val longitude : Double,
-    val latitude : Double
-)

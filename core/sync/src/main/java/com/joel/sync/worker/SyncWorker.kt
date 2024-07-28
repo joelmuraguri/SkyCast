@@ -34,7 +34,7 @@ class SyncWorker @AssistedInject constructor(
                 locationClient.fetchCurrentLocation().collect { location ->
                     val response = client.forecast(location.latitude, location.longitude)
                     response.suspendOnSuccess {
-                        forecastDao.insertWeather(data.asEntity())
+                        forecastDao.insertWeather(data.asEntity(System.currentTimeMillis()))
                     }
                 }
 

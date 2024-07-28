@@ -3,14 +3,16 @@ package com.joel.data.mappers
 import com.joel.database.entity.DailyEntity
 import com.joel.database.entity.HourlyEntity
 import com.joel.database.entity.WeatherEntity
+import com.joel.models.ForecastInfo
 import com.joel.models.Location
-import com.joel.models.Weather
+import com.joel.models.WeatherDomain
+import com.joel.models.WeatherType
 import com.joel.network.models.ForecastResponse
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 object ForecastEntityMapper : EntityMapper<WeatherEntity, ForecastResponse>{
-    override fun asEntity(response: ForecastResponse): WeatherEntity {
+    override fun asEntity(response: ForecastResponse, timestamp : Long): WeatherEntity {
         val dailyForecast = response.daily.toDailyForecast()
         val hourlyForecast = response.hourly.toHourlyForecast()
         return WeatherEntity(
@@ -19,16 +21,16 @@ object ForecastEntityMapper : EntityMapper<WeatherEntity, ForecastResponse>{
             latitude = response.latitude,
             dailyForecast = Json.encodeToString(dailyForecast),
             hourlyForecast = Json.encodeToString(hourlyForecast),
-            timeStamp = 0L
+            timeStamp = timestamp
         )
     }
 }
 
-object ForecastDomainMapper : DomainMapper<Weather, WeatherEntity>{
-    override fun asDomain(entity: WeatherEntity): Weather {
+object ForecastDomainMapper : DomainMapper<WeatherDomain, WeatherEntity>{
+    override fun asDomain(entity: WeatherEntity): WeatherDomain {
         val dailyForecast = Json.decodeFromString<List<DailyEntity>>(entity.dailyForecast)
         val hourlyForecast = Json.decodeFromString<List<HourlyEntity>>(entity.hourlyForecast)
-        return Weather(
+        return WeatherDomain(
             location = Location(entity.longitude, entity.latitude),
             dailyForeCast = dailyForecast.map { it.toDomain() },
             hourlyForecast = hourlyForecast.map { it.toDomain() },
@@ -66,8 +68,8 @@ fun ForecastResponse.Hourly.toHourlyForecast(): List<HourlyEntity> {
     }
 }
 
-fun DailyEntity.toDomain(): Weather.Daily {
-    return Weather.Daily(
+fun DailyEntity.toDomain(): WeatherDomain.Daily {
+    return WeatherDomain.Daily(
         uv = this.uv,
         date = this.date,
         weather = this.weather,
@@ -78,8 +80,8 @@ fun DailyEntity.toDomain(): Weather.Daily {
     )
 }
 
-fun HourlyEntity.toDomain(): Weather.Hourly {
-    return Weather.Hourly(
+fun HourlyEntity.toDomain(): WeatherDomain.Hourly {
+    return WeatherDomain.Hourly(
         time = this.time,
         temp = this.temp,
         weather = this.weather,
@@ -91,11 +93,50 @@ fun HourlyEntity.toDomain(): Weather.Hourly {
     )
 }
 
-fun ForecastResponse.asEntity(): WeatherEntity {
-    return ForecastEntityMapper.asEntity(this)
+object ForecastPresentationMapper : PresentationMapper<ForecastInfo, WeatherDomain>{
+    override fun asPresentation(domain: WeatherDomain): ForecastInfo {
+        return ForecastInfo(
+            location = domain.location,
+            dailyForeCast = domain.dailyForeCast.map { it.toPresentation() },
+            hourlyForecast = domain.hourlyForecast.map { it.toPresentation() },
+            name = domain.name
+        )
+    }
 }
-fun WeatherEntity.asDomain(): Weather {
+
+fun WeatherDomain.Hourly.toPresentation() : ForecastInfo.HourlyForecast {
+    return ForecastInfo.HourlyForecast(
+        time = this.time,
+        temp = this.temp,
+        weather = WeatherType.fromWMO(this.weather),
+        wind = this.wind,
+        pressure = this.pressure,
+        visibility = this.visibility,
+        isDay = this.isDay,
+        humidity = this.humidity
+    )
+}
+
+fun WeatherDomain.Daily.toPresentation() : ForecastInfo.DailyForecast{
+    return ForecastInfo.DailyForecast(
+        uv = this.uv,
+        date = this.date,
+        weather = WeatherType.fromWMO(this.weather),
+        lowTemp = this.lowTemp,
+        highTemp = this.highTemp,
+        sunrise = this.sunrise,
+        sunset = this.sunset
+    )
+}
+
+fun ForecastResponse.asEntity(timestamp: Long): WeatherEntity {
+    return ForecastEntityMapper.asEntity(this, timestamp)
+}
+fun WeatherEntity.asDomain(): WeatherDomain {
     return ForecastDomainMapper.asDomain(this)
 }
 
+fun WeatherDomain.asPresentation(): ForecastInfo{
+    return ForecastPresentationMapper.asPresentation(this)
+}
 

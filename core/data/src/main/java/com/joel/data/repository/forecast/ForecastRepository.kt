@@ -2,7 +2,7 @@ package com.joel.data.repository.forecast
 
 import androidx.annotation.WorkerThread
 import com.joel.models.Location
-import com.joel.models.Weather
+import com.joel.models.WeatherDomain
 import kotlinx.coroutines.flow.Flow
 
 interface ForecastRepository {
@@ -12,5 +12,5 @@ interface ForecastRepository {
         onStart: () -> Unit,
         onComplete: () -> Unit,
         onError: (String?) -> Unit,
-    ): Flow<Weather>
+    ): Flow<WeatherDomain>
 }
