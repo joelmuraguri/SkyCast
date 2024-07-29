@@ -31,7 +31,7 @@ androidxComposeRuntimeTracing = "1.0.0-beta01"
 room = "2.6.1"
 workRuntimeKtx = "2.9.0"
 hiltCommon = "1.2.0"
-
+androidxNavigation = "2.8.0-beta02"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,6 +78,7 @@ room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room-testing = { group ="androidx.room", name= "room-testing", version.ref="room"}
 room-paging = {group="androidx.room", name="room-paging", version.ref="room"}
 androidx-hilt-common = { group = "androidx.hilt", name = "hilt-common", version.ref = "hiltCommon" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigation" }
 
 
 [plugins]
