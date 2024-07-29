@@ -19,7 +19,7 @@
             <option value="$PROJECT_DIR$/presentation" />
             <option value="$PROJECT_DIR$/presentation/home" />
             <option value="$PROJECT_DIR$/presentation/locations" />
-            <option value="$PROJECT_DIR$/presentation/settimgs" />
+            <option value="$PROJECT_DIR$/presentation/settings" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

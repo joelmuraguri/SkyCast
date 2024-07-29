@@ -1,4 +1,4 @@
-package com.joel.settimgs
+package com.joel.settings
 
 import org.junit.Test
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.joel.locations"
+    namespace = "com.joel.settings"
     compileSdk = 34
 
     defaultConfig {
@@ -29,13 +29,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
-    }
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
     }
     buildFeatures {
         compose = true
