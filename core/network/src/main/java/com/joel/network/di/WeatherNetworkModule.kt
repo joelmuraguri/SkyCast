@@ -2,6 +2,9 @@ package com.joel.network.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.joel.network.BuildConfig
+import com.joel.network.WeatherJson
+import com.joel.network.WeatherOkHttpClient
+import com.joel.network.WeatherRetrofit
 import com.joel.network.client.WeatherClient
 import com.joel.network.service.WeatherService
 import com.skydoves.sandwich.retrofit.adapters.ApiResponseCallAdapterFactory
@@ -20,23 +23,24 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal object WeatherNetworkModule {
 
-    @Singleton
     @Provides
-    fun provideJson(): Json = Json {
+    @Singleton
+    @WeatherJson
+    fun provideWeatherJson(): Json = Json {
         ignoreUnknownKeys = true
     }
 
-
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    @WeatherOkHttpClient
+    fun provideWeatherOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .apply {
                 if (BuildConfig.DEBUG) {
                     this.addNetworkInterceptor(
                         HttpLoggingInterceptor().apply {
                             level = HttpLoggingInterceptor.Level.BODY
-                        },
+                        }
                     )
                 }
             }
@@ -45,7 +49,11 @@ internal object WeatherNetworkModule {
 
     @Provides
     @Singleton
-    fun provideForeCastRetrofit(json: Json, okHttpClient: OkHttpClient): Retrofit {
+    @WeatherRetrofit
+    fun provideForeCastRetrofit(
+        @WeatherJson json: Json,
+        @WeatherOkHttpClient okHttpClient: OkHttpClient
+    ): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl("https://api.open-meteo.com/v1/")
@@ -56,7 +64,7 @@ internal object WeatherNetworkModule {
 
     @Provides
     @Singleton
-    fun provideForeCastService(retrofit: Retrofit): WeatherService {
+    fun provideForeCastService(@WeatherRetrofit retrofit: Retrofit): WeatherService {
         return retrofit.create(WeatherService::class.java)
     }
 
@@ -65,6 +73,4 @@ internal object WeatherNetworkModule {
     fun provideWeatherClient(service: WeatherService): WeatherClient {
         return WeatherClient(service)
     }
-
-
 }

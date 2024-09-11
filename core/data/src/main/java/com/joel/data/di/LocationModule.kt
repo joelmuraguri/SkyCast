@@ -38,8 +38,9 @@ object LocationModule {
 
     @Provides
     fun providesLocationDataSource(
+        @ApplicationContext context: Context,
         locationRequest: LocationRequest,
         fusedLocationProviderClient: FusedLocationProviderClient
-    ): LocationClient = DefaultLocationClient(fusedLocationProviderClient, locationRequest)
+    ): LocationClient = DefaultLocationClient(context,fusedLocationProviderClient, locationRequest)
 
 }

@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.joel.skycast"
-        minSdk = 21
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -67,6 +67,7 @@ android {
 dependencies {
 
     implementation(project(":core:sync"))
+    implementation(project(":core:network"))
     implementation(project(":presentation:home"))
 
     implementation(libs.androidx.core.ktx)
@@ -87,6 +88,17 @@ dependencies {
 
     //hilt
     implementation(libs.hilt)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
+
+    //hilt-worker
+    ksp(libs.hilt.ext.compiler)
+    implementation(libs.hilt.ext.work)
+
+    //WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.common)
+    androidTestImplementation(libs.androidx.work.testing)
+
 
 }

@@ -1,6 +1,7 @@
 package com.joel.sync.worker
 
 import android.content.Context
+import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkInfo.State
@@ -22,15 +23,20 @@ internal class WorkManagerSyncManager @Inject constructor(
                 .map(List<WorkInfo>::anyRunning)
                 .conflate()
 
-        override fun requestSync() {
-            val workManager = WorkManager.getInstance(context)
-            workManager.enqueueUniquePeriodicWork(
-                SYNC_WORK_NAME,
-                ExistingPeriodicWorkPolicy.UPDATE,
-                SyncWorker.startUpSyncWork(),
-            )
+    override fun requestSync() {
+        val workManager = WorkManager.getInstance(context)
+        workManager.enqueueUniquePeriodicWork(
+            SYNC_WORK_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            SyncWorker.startUpSyncWork(),
+        )
+
+        workManager.getWorkInfosForUniqueWork(SYNC_WORK_NAME).get().forEach {
+            Log.d(SYNC_WORK_NAME, "-----------------------> Work state: ${it.state}")
         }
     }
+
+}
 
 private fun List<WorkInfo>.anyRunning() = any { it.state == State.RUNNING }
 

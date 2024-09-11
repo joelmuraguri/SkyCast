@@ -13,3 +13,4 @@ abstract class SyncModule {
     @Binds
     internal abstract fun bindsSyncStatusMonitor(syncStatusMonitor: WorkManagerSyncManager): SyncManager
 }
+

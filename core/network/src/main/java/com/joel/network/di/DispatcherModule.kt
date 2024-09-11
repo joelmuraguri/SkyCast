@@ -20,4 +20,8 @@ internal object DispatchersModule {
     @Provides
     @Dispatcher(SkyCastDispatchers.DEFAULT)
     fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+    @Provides
+    @Dispatcher(SkyCastDispatchers.MAIN)
+    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 }
