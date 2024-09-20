@@ -14,6 +14,7 @@ import com.joel.data.repository.location.LocationClient
 import com.joel.database.dao.ForecastDao
 import com.joel.network.Dispatcher
 import com.joel.network.SkyCastDispatchers
+import com.joel.network.client.ReverseGeoClient
 import com.joel.network.client.WeatherClient
 import com.skydoves.sandwich.suspendOnSuccess
 import dagger.assisted.Assisted
@@ -29,6 +30,7 @@ class SyncWorker @AssistedInject constructor(
     @Dispatcher(SkyCastDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
     private val forecastDao: ForecastDao,
     private val client: WeatherClient,
+    private val reverseGeoClient : ReverseGeoClient,
     private val locationClient: LocationClient
 ) : CoroutineWorker(appContext, workerParams) {
 
@@ -59,9 +61,14 @@ class SyncWorker @AssistedInject constructor(
                 if (location != null) {
                     Log.d(SYNC_WORK_NAME, "-------------> Location fetched successfully: LAT: ${location.latitude}, LON: ${location.longitude}")
                     val response = client.forecast(location.latitude, location.longitude)
+                    var locationName = " "
+                    reverseGeoClient.getLocationAddress(location.latitude, location.longitude).suspendOnSuccess {
+                        locationName  = data.address.suburb ?: "__"
+                        Log.d(SYNC_WORK_NAME, "---------------------> LOCATION NAME : $locationName")
+                    }
                     response.suspendOnSuccess {
                         Log.d(SYNC_WORK_NAME, "---------------------> Success: $data")
-                        forecastDao.insertWeather(data.asEntity(System.currentTimeMillis()))
+                        forecastDao.insertWeather(data.asEntity(System.currentTimeMillis(), locationName))
                     }
                 } else {
                     Log.e(SYNC_WORK_NAME, "----------------> Failed to fetch location.")

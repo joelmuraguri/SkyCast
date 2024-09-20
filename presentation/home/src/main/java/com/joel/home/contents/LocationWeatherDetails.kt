@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -44,7 +46,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LocationWeatherDetails(
     forecastInfo: ForecastInfo,
@@ -67,30 +68,25 @@ fun LocationWeatherDetails(
     val isDayTime = currentTime.isAfter(sunriseTime) && currentTime.isBefore(sunsetTime)
 
     val currentTimeInHours = currentTime.hour + currentTime.minute / 60f
+    val currentHour = currentTime.hour
 
+    val currentForecast = forecastInfo.hourlyForecast.find {
+        LocalDateTime.parse(it.time, DateTimeFormatter.ISO_DATE_TIME).hour == currentHour
+    }
 
     Column {
-        forecastInfo.hourlyForecast.forEach { hourlyForecast ->
+        currentForecast?.let { hourlyForecast ->
             val dateTime = LocalDateTime.parse(hourlyForecast.time, DateTimeFormatter.ISO_DATE_TIME)
             val formattedTime = currentTime.format(hourlyFormat)
             val formattedDate = dateTime.format(dailyFormat)
 
             if (showMoreInfo) {
-                LessWeatherDetails(
-                    day = dateTime.dayOfWeek.name,
-                    date = formattedDate,
-                    time = formattedTime,
-                    weather = hourlyForecast.weather.weatherDesc,
-                    temperature = hourlyForecast.temp.toInt(),
-                    weatherIcon = hourlyForecast.weather.iconRes
-                )
-            } else {
                 MoreWeatherDetails(
                     day = dateTime.dayOfWeek.name,
                     date = formattedDate,
                     time = formattedTime,
                     weather = hourlyForecast.weather.weatherDesc,
-                    temperature = hourlyForecast.temp.toInt(),
+                    temperature = hourlyForecast.temp.toFloat().toInt(),
                     weatherIcon = hourlyForecast.weather.iconRes,
                     items = items,
                     sunrise = sunriseTime.format(hourlyFormat),
@@ -101,46 +97,55 @@ fun LocationWeatherDetails(
                     isDayTime = isDayTime
                 )
             }
+            else {
+                LessWeatherDetails(
+//                    day = dateTime.dayOfWeek.name,
+                    date = formattedDate,
+                    time = formattedTime,
+                    weather = hourlyForecast.weather.weatherDesc,
+                    temperature = hourlyForecast.temp.toFloat().toInt(),
+                    weatherIcon = hourlyForecast.weather.iconRes
+                )
+            }
         }
-    }
+
+//        forecastInfo.hourlyForecast.forEach { hourlyForecast ->
+//            val dateTime = LocalDateTime.parse(hourlyForecast.time, DateTimeFormatter.ISO_DATE_TIME)
+//            val formattedTime = currentTime.format(hourlyFormat)
+//            val formattedDate = dateTime.format(dailyFormat)
+//
+//            if (showMoreInfo) {
+//                MoreWeatherDetails(
+//                    day = dateTime.dayOfWeek.name,
+//                    date = formattedDate,
+//                    time = formattedTime,
+//                    weather = hourlyForecast.weather.weatherDesc,
+//                    temperature = hourlyForecast.temp.toFloat().toInt(),
+//                    weatherIcon = hourlyForecast.weather.iconRes,
+//                    items = items,
+//                    sunrise = sunriseTime.format(hourlyFormat),
+//                    sunset = sunsetTime.format(hourlyFormat),
+//                    dayDuration = "$dayDuration hours",
+//                    nightDuration = "$nightDuration hours",
+//                    currentTime = currentTimeInHours,
+//                    isDayTime = isDayTime
+//                )
+//            }
+//            else {
+//                LessWeatherDetails(
+////                    day = dateTime.dayOfWeek.name,
+//                    date = formattedDate,
+//                    time = formattedTime,
+//                    weather = hourlyForecast.weather.weatherDesc,
+//                    temperature = hourlyForecast.temp.toFloat().toInt(),
+//                    weatherIcon = hourlyForecast.weather.iconRes
+//                )
+//            }
+//        }
+   }
 }
 
 
-//@Composable
-//fun LocationWeatherDetails(
-//    day: String,
-//    date: String,
-//    time: String,
-//    weather: String,
-//    temperature: Int,
-//    weatherIcon: Int,
-//    items: List<GridItem>,
-//    forecastInfo: ForecastInfo,
-//    showMoreInfo : Boolean
-//){
-//
-//    if(showMoreInfo){
-//        LessWeatherDetails(
-//            day = day,
-//            date = date,
-//            time = time,
-//            weather = weather,
-//            temperature = temperature,
-//            weatherIcon = weatherIcon
-//        )
-//    } else {
-//        MoreWeatherDetails(
-//            day = day,
-//            date = date,
-//            time = time,
-//            weather = weather,
-//            temperature = temperature,
-//            weatherIcon = weatherIcon,
-//            items = items
-//        )
-//    }
-//
-//}
 
 @Composable
 fun MoreWeatherDetails(
@@ -158,7 +163,7 @@ fun MoreWeatherDetails(
 
     Column {
         LessWeatherDetails(
-            day = day,
+//            day = day,
             date = date,
             time = time,
             weather = weather,
@@ -172,7 +177,7 @@ fun MoreWeatherDetails(
 
 @Composable
 fun LessWeatherDetails(
-    day: String,
+//    day: String,
     date: String,
     time: String,
     weather: String,
@@ -193,7 +198,7 @@ fun LessWeatherDetails(
                 .padding(14.dp)
         ) {
             Column() {
-                Text(text = "$day, $date, $time")
+                Text(text = "$date, $time")
                 TemperatureDisplay(
                     temperature = temperature,
                     unit = "°C",
@@ -307,7 +312,6 @@ fun DomeTracker(dayDuration: String, nightDuration: String, currentTime: Float, 
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -341,7 +345,7 @@ fun WeatherRowDayPreview(){
 fun LessDetailsPreview(){
     MaterialTheme {
         LessWeatherDetails(
-            day = "Sun",
+//            day = "Sun",
             date = "23 April",
             time = "12:05",
             weather = "Partially Cloudy",
@@ -391,7 +395,6 @@ fun TemperatureDisplayPreview() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun MoreWeatherDetailsPreview(){

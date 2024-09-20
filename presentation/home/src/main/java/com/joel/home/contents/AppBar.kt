@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeAppBar(
     text : String,
-    onClick : (Boolean) -> Unit,
+    showLessClick : (Boolean) -> Unit,
+    showMoreClick : (Boolean) -> Unit,
     hideDetails : Boolean
 ){
 
@@ -37,16 +38,15 @@ fun HomeAppBar(
             Text(
                 text = text,
                 color = Color.White,
-                fontSize = 18.sp,
-
-                ) },
+                fontSize = 18.sp)
+                },
         actions = {
             if (hideDetails){
                 ClickableRowWithIconAndText(
                     text = "Show more",
                     icon = Icons.Filled.KeyboardArrowDown,
                     onClick = {
-                        onClick(hideDetails)
+                        showMoreClick(true)
                     }
                 )
             } else {
@@ -54,7 +54,7 @@ fun HomeAppBar(
                     text = "Show less",
                     icon = Icons.Filled.KeyboardArrowUp,
                     onClick = {
-                        onClick(hideDetails)
+                        showLessClick(false)
                     }
                 )
             }
@@ -102,8 +102,9 @@ fun ClickableRowWithIconAndText(
 fun HomeAppBarPreview(){
     HomeAppBar(
         text = "Nairobi",
-        onClick = { /*TODO*/ },
-        hideDetails = false
+        hideDetails = false,
+        showLessClick = {},
+        showMoreClick = {}
     )
 }
 

@@ -1,5 +1,6 @@
 package com.joel.home.vm
 
+import android.util.Log
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.joel.data.mappers.asPresentation
 import com.joel.data.repository.forecast.ForecastRepository
 import com.joel.models.ForecastInfo
-import com.joel.sync.worker.SyncManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +31,7 @@ class HomeViewModel @Inject constructor(
             onComplete = { HomeUiState.Idle},
             onStart = { HomeUiState.Loading }
         ).map {
+            Log.d("PRESENTATION DATA", "--------> ${it.asPresentation()}")
             HomeUiState.Success(it.asPresentation())
         }.stateIn(
                 scope = viewModelScope,
@@ -44,6 +45,11 @@ class HomeViewModel @Inject constructor(
             is HomeEvents.ShowMoreInfoClick -> {
                 _state.value = _state.value.copy(
                     showMore = true
+                )
+            }
+            is HomeEvents.ShowLessInfoClick -> {
+                _state.value = _state.value.copy(
+                    showMore = false
                 )
             }
         }
@@ -65,6 +71,7 @@ sealed interface HomeUiState {
 
 sealed class HomeEvents{
     data class ShowMoreInfoClick(val showMore : Boolean) : HomeEvents()
+    data class ShowLessInfoClick(val showLess : Boolean) : HomeEvents()
 }
 
 data class HomeScreenState(

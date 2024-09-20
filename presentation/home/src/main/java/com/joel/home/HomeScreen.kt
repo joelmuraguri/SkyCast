@@ -26,28 +26,16 @@ import com.joel.home.vm.HomeViewModel
 
 const val design= "https://www.behance.net/gallery/169457873/Fairy-weather-forecast-mobile-web-progressive-app?tracking_source=search_projects|weather+app&l=60"
 
+
 @Composable
 fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel()
-){
-
-    val forecastState by homeViewModel.forecastInfoState.collectAsStateWithLifecycle()
-//    val isSyncing by homeViewModel.isSyncing.collectAsStateWithLifecycle()
-
+) {
     val state = homeViewModel.state.value
+    val forecastInfoState by homeViewModel.forecastInfoState.collectAsStateWithLifecycle()
 
-    when(forecastState){
-        is HomeUiState.Error -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(text = (forecastState as HomeUiState.Error).message!!)
-            }
-        }
-        HomeUiState.Idle -> TODO()
-        HomeUiState.Loading -> {
+    when (forecastInfoState) {
+        is HomeUiState.Loading -> {
             Box(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -57,9 +45,19 @@ fun HomeScreen(
             }
         }
         is HomeUiState.Success -> {
+            val forecastInfo = (forecastInfoState as HomeUiState.Success).forecastInfo
             Scaffold (
                 topBar = {
-                    HomeAppBar(text = (forecastState as HomeUiState.Success).forecastInfo.name, onClick = { homeViewModel.onEvents(HomeEvents.ShowMoreInfoClick(it)) }, hideDetails = state.showMore)
+                    HomeAppBar(
+                        text = forecastInfo.name,
+                        hideDetails = state.showMore,
+                        showMoreClick = {
+                            homeViewModel.onEvents(HomeEvents.ShowMoreInfoClick(it))
+                        },
+                        showLessClick = {
+                            homeViewModel.onEvents(HomeEvents.ShowLessInfoClick(it))
+                        }
+                    )
                 }
             ){
                 Box(
@@ -76,30 +74,34 @@ fun HomeScreen(
                             GridItem(GridItemType.Pressure, "1013 hPa")
                         )
                         item {
-//                            if (isSyncing) {
-//                                Box{
-//                                    Text("Syncing data...")
-//                                }
-//                            }
                             LocationWeatherDetails(
-                                forecastInfo = (forecastState as HomeUiState.Success).forecastInfo,
+                                forecastInfo = forecastInfo,
                                 showMoreInfo = state.showMore,
                                 items = gridItems
                             )
                         }
-//                        item {
-//                            LocationWeatherDetails(
-//                                forecastInfo = (forecastState as HomeUiState.Success).forecastInfo,
-//                                showMoreInfo = state.showMore, items = gridItems)
-//                        }
                         item {
-                            HourlyForecast(hourlyForecastItems = (forecastState as HomeUiState.Success).forecastInfo.hourlyForecast)
+                            HourlyForecast(hourlyForecastItems = forecastInfo.hourlyForecast)
                         }
                     }
                 }
             }
-
+        }
+        is HomeUiState.Error -> {
+            val errorMessage = (forecastInfoState as HomeUiState.Error).message
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(text = errorMessage!!)
+            }
+        }
+        is HomeUiState.Idle -> {
+            // Handle idle state
         }
     }
 }
+
+
 

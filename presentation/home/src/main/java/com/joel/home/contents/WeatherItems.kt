@@ -50,7 +50,9 @@ enum class GridItemType {
 fun WeatherGridItems(items: List<GridItem>) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
-        contentPadding = PaddingValues(8.dp)
+        contentPadding = PaddingValues(8.dp),
+        modifier = Modifier
+            .height(300.dp)
     ) {
         items(items) { item ->
             when (item.type) {

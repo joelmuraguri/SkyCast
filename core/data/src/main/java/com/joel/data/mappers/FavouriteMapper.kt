@@ -17,7 +17,7 @@ object FavouriteEntityMapper : EntityMapper<FavouritePlace, GeoCodingResponse.Pl
 //        )
 //    }
 
-    override fun asEntity(response: GeoCodingResponse.Place, timestamp: Long): FavouritePlace {
+    override fun asEntity(response: GeoCodingResponse.Place, timestamp: Long, locationName : String): FavouritePlace {
         TODO("Not yet implemented")
     }
 

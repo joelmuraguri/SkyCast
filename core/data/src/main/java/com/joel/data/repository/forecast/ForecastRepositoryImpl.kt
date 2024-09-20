@@ -1,5 +1,6 @@
 package com.joel.data.repository.forecast
 
+import android.util.Log
 import androidx.annotation.WorkerThread
 import com.joel.data.mappers.asDomain
 import com.joel.database.dao.ForecastDao
@@ -31,6 +32,7 @@ class ForecastRepositoryImpl @Inject constructor(
                 forecastDao.getWeather()
             }
             emit(weatherEntity.asDomain())
+            Log.d("CACHED DATA :" , "-------> ${weatherEntity.asDomain()}")
             onComplete()
         } catch (e: Exception) {
             onError(e.message)

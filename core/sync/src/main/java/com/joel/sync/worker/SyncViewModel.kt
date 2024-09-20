@@ -19,10 +19,6 @@ class SyncViewModel @Inject constructor(
             initialValue = false,
         )
 
-//    init {
-//        syncManager.requestSync()
-//    }
-
     fun requestSync() {
        syncManager.requestSync()
     }

@@ -12,11 +12,11 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 object ForecastEntityMapper : EntityMapper<WeatherEntity, ForecastResponse>{
-    override fun asEntity(response: ForecastResponse, timestamp : Long): WeatherEntity {
+    override fun asEntity(response: ForecastResponse, timestamp : Long, locationName : String): WeatherEntity {
         val dailyForecast = response.daily.toDailyForecast()
         val hourlyForecast = response.hourly.toHourlyForecast()
         return WeatherEntity(
-            locationName = "",
+            locationName = locationName,
             longitude = response.longitude,
             latitude = response.latitude,
             dailyForecast = Json.encodeToString(dailyForecast),
@@ -129,8 +129,8 @@ fun WeatherDomain.Daily.toPresentation() : ForecastInfo.DailyForecast{
     )
 }
 
-fun ForecastResponse.asEntity(timestamp: Long): WeatherEntity {
-    return ForecastEntityMapper.asEntity(this, timestamp)
+fun ForecastResponse.asEntity(timestamp: Long, locationName: String): WeatherEntity {
+    return ForecastEntityMapper.asEntity(this, timestamp, locationName)
 }
 fun WeatherEntity.asDomain(): WeatherDomain {
     return ForecastDomainMapper.asDomain(this)

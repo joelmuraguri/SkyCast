@@ -12,7 +12,8 @@ interface WeatherService {
         @Query("longitude") longitude : Double,
         @Query("hourly") hourly : List<String> = hourlyParams,
         @Query("forecast_days") forecastDays: Int = 7,
-        @Query("daily") daily : List<String> = dailyParams
+        @Query("daily") daily : List<String> = dailyParams,
+        @Query("forecast_hours") forecastHours : Int = 24
     ) : ApiResponse<ForecastResponse>
 }
 

@@ -1,7 +1,7 @@
 package com.joel.data.mappers
 
 interface EntityMapper<Entity, Response> {
-    fun asEntity(response: Response, timestamp :Long) : Entity
+    fun asEntity(response: Response, timestamp :Long, locationName : String) : Entity
 }
 
 interface DomainMapper<Domain, Entity>{
