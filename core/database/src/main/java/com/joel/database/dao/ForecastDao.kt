@@ -15,7 +15,7 @@ interface ForecastDao {
     suspend fun insertWeather(weather: WeatherEntity)
 
     @Query("SELECT * FROM weather_forecast")
-    fun getWeather(): WeatherEntity
+    fun getWeather(): Flow<WeatherEntity>
 
     @Query("DELETE FROM weather_forecast")
     suspend fun deleteWeather()

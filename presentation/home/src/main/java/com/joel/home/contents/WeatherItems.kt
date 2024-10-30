@@ -52,7 +52,7 @@ fun WeatherGridItems(items: List<GridItem>) {
         columns = GridCells.Fixed(3),
         contentPadding = PaddingValues(8.dp),
         modifier = Modifier
-            .height(300.dp)
+            .height(150.dp)
     ) {
         items(items) { item ->
             when (item.type) {

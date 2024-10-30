@@ -22,23 +22,65 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joel.models.ForecastInfo
 import com.joel.models.WeatherType
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
 
 @Composable
 fun HourlyForecast(
-    hourlyForecastItems: List<ForecastInfo.HourlyForecast>
+    hourlyForecastItems: List<ForecastInfo.HourlyForecast>,
+    currentTime: LocalDateTime
 ) {
+    val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+
+    val filteredForecasts = hourlyForecastItems.filter { forecast ->
+        val forecastTime = LocalDateTime.parse(forecast.time, inputFormat)
+        forecastTime.isAfter(currentTime) || forecastTime.hour == currentTime.hour
+    }.toMutableList()
+
+    val currentHourForecastIndex = filteredForecasts.indexOfFirst {
+        LocalDateTime.parse(it.time, inputFormat).hour == currentTime.hour
+    }
+
+    if (currentHourForecastIndex != -1) {
+        val currentHourForecast = filteredForecasts.removeAt(currentHourForecastIndex)
+        filteredForecasts.add(0, currentHourForecast.copy(temp = currentHourForecast.temp, time = currentHourForecast.time, weather = currentHourForecast.weather))
+    }
+
     LazyRow {
-        items(hourlyForecastItems) { forecast ->
-            HourlyItemForecast(hourlyForecast = forecast)
+        items(filteredForecasts) { forecast ->
+            HourlyItemForecast(hourlyForecast = forecast, currentTime)
         }
     }
 }
 
 
+
 @Composable
 fun HourlyItemForecast(
-    hourlyForecast : ForecastInfo.HourlyForecast
+    hourlyForecast : ForecastInfo.HourlyForecast,
+    currentTime: LocalDateTime
 ){
+
+    val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+    val outputFormat = DateTimeFormatter.ofPattern("hh:mm a")
+    val forecastTime = try {
+        LocalDateTime.parse(hourlyForecast.time, inputFormat)
+    } catch (e: Exception) {
+        null
+    }
+
+    val isCurrentHour = forecastTime?.hour == currentTime.hour
+
+    val displayTime = if (isCurrentHour) {
+        "Now"
+    } else {
+        forecastTime?.format(outputFormat) ?: "__:__"
+    }
+
+
+
     Column(
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,8 +102,7 @@ fun HourlyItemForecast(
             )
         }
         Text(
-            text = hourlyForecast.time,
-            color = Color.Black.copy(0.6f),
+            text = displayTime.uppercase(Locale.getDefault()),
             fontSize = 8.sp
         )
 
@@ -74,7 +115,7 @@ fun HourlyItemForecast(
 @Composable
 fun HourlyItemForecastPreview(){
     val hourlyForecast = ForecastInfo.HourlyForecast(
-        time = "19:00",
+        time = "2024-10-02T16:00",
         humidity = 67,
         isDay = 1,
         pressure = 234,
@@ -85,7 +126,7 @@ fun HourlyItemForecastPreview(){
 
     )
     MaterialTheme {
-        HourlyItemForecast(hourlyForecast)
+        HourlyItemForecast(hourlyForecast, LocalDateTime.now())
     }
 
 }

@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+
+
 class ForecastRepositoryImpl @Inject constructor(
     private val forecastDao: ForecastDao,
     @Dispatcher(SkyCastDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
@@ -26,16 +28,16 @@ class ForecastRepositoryImpl @Inject constructor(
         onStart: () -> Unit,
         onComplete: () -> Unit,
         onError: (String?) -> Unit
-    )  : Flow<WeatherDomain> = flow{
+    ): Flow<WeatherDomain> = flow {
         try {
-            val weatherEntity = withContext(ioDispatcher) {
-                forecastDao.getWeather()
+            forecastDao.getWeather().collect { weatherEntity ->
+                    emit(weatherEntity.asDomain())
+                    Log.d("CACHED DATA:", "-------> ${weatherEntity.asDomain()}")
             }
-            emit(weatherEntity.asDomain())
-            Log.d("CACHED DATA :" , "-------> ${weatherEntity.asDomain()}")
             onComplete()
         } catch (e: Exception) {
             onError(e.message)
         }
     }.onStart { onStart() }.onCompletion { onComplete() }.flowOn(ioDispatcher)
+
 }

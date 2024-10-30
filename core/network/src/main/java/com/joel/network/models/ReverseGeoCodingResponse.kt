@@ -33,7 +33,9 @@ data class ReverseGeoCodingResponse(
         val countryCode: String ?= null,
         val postcode: String ?= null,
         val state: String ?= null,
-        val suburb: String ?= null
+        val suburb: String ?= null,
+        val amenity: String ?= null,
+        val building: String ?= null,
+        val county : String ?= null
     )
-
 }

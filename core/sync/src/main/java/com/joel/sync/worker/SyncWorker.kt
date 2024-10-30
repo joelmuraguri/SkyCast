@@ -58,20 +58,17 @@ class SyncWorker @AssistedInject constructor(
         try {
             Log.d(SYNC_WORK_NAME, "-------------------------------------------> Fetching current location")
             locationClient.fetchCurrentLocation().collect { location ->
-                if (location != null) {
-                    Log.d(SYNC_WORK_NAME, "-------------> Location fetched successfully: LAT: ${location.latitude}, LON: ${location.longitude}")
-                    val response = client.forecast(location.latitude, location.longitude)
-                    var locationName = " "
-                    reverseGeoClient.getLocationAddress(location.latitude, location.longitude).suspendOnSuccess {
-                        locationName  = data.address.suburb ?: "__"
-                        Log.d(SYNC_WORK_NAME, "---------------------> LOCATION NAME : $locationName")
-                    }
-                    response.suspendOnSuccess {
-                        Log.d(SYNC_WORK_NAME, "---------------------> Success: $data")
-                        forecastDao.insertWeather(data.asEntity(System.currentTimeMillis(), locationName))
-                    }
-                } else {
-                    Log.e(SYNC_WORK_NAME, "----------------> Failed to fetch location.")
+                Log.d(SYNC_WORK_NAME, "-------------> Location fetched successfully: LAT: ${location.latitude}, LON: ${location.longitude}")
+                val response = client.forecast(location.latitude, location.longitude)
+                var locationName = "__:__"
+                reverseGeoClient.getLocationAddress(location.latitude, location.longitude).suspendOnSuccess {
+                    locationName  = data.address.suburb ?: data.address.county ?: "__:__"
+                    Log.d(SYNC_WORK_NAME, "---------------------> LOCATION NAME : $locationName")
+                }
+                response.suspendOnSuccess {
+                    Log.d(SYNC_WORK_NAME, "---------------------> Success: $data")
+                    forecastDao.deleteWeather()
+                    forecastDao.insertWeather(data.asEntity(System.currentTimeMillis(), locationName))
                 }
             }
             Log.d(SYNC_WORK_NAME, "--------------------------------> Work completed successfully")

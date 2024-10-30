@@ -46,11 +46,13 @@ class HomeViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     showMore = true
                 )
+                Log.d("-------------> HomeViewModel", "Show More Info Event Triggered ${_state.value.showMore}")
             }
             is HomeEvents.ShowLessInfoClick -> {
                 _state.value = _state.value.copy(
                     showMore = false
                 )
+                Log.d("-------------> HomeViewModel", "Show Less Info Event Triggered ${_state.value.showMore}")
             }
         }
     }
