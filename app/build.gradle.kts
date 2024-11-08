@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.serialization)
 
 }
 
@@ -69,6 +70,8 @@ dependencies {
     implementation(project(":core:sync"))
     implementation(project(":core:network"))
     implementation(project(":presentation:home"))
+    implementation(project(":presentation:locations"))
+    implementation(project(":presentation:settings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -99,6 +102,8 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.common)
     androidTestImplementation(libs.androidx.work.testing)
+
+    implementation(libs.kotlinx.serialization.json)
 
 
 }

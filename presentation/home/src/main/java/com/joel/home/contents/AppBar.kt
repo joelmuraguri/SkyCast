@@ -75,7 +75,7 @@ fun ClickableRowWithIconAndText(
     Row(
         modifier = Modifier
             .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

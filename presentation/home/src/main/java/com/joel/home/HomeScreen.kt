@@ -2,6 +2,7 @@ package com.joel.home
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -66,10 +67,13 @@ fun HomeScreen(
                             homeViewModel.onEvents(HomeEvents.ShowLessInfoClick(it))
                         }
                     )
-                }
+                },
+                modifier = Modifier
+                    .fillMaxSize()
             ){
-                Box(
+                Column(
                     modifier = Modifier
+                        .fillMaxSize()
                         .padding(it)
                 ){
                     LazyColumn {

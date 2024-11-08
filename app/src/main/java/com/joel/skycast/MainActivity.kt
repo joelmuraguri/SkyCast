@@ -8,15 +8,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import com.joel.home.HomeScreen
+import androidx.navigation.compose.rememberNavController
+import com.joel.skycast.navigation.BottomNavigationBar
+import com.joel.skycast.navigation.SkyCastNavGraph
 import com.joel.skycast.ui.theme.SkyCastTheme
 import com.joel.sync.worker.SYNC_WORK_NAME
 import com.joel.sync.worker.SyncViewModel
@@ -53,17 +57,22 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SkyCastTheme {
+                val navController = rememberNavController()
+                val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
+
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    bottomBar = { if (bottomBarState.value) BottomNavigationBar(navController) },
                     snackbarHost = { SnackbarHost(snackbarHostState) }
-                ) { innerPadding ->
-                    Box(
-                        contentAlignment = Alignment.Center,
+                ) { padding ->
+                    Column(
                         modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
+                            .padding(padding)
                     ) {
-                        HomeScreen()
+                        SkyCastNavGraph(
+                            navHostController = navController,
+                        )
                     }
                 }
             }
