@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
+
 }
 
 android {
@@ -48,9 +50,16 @@ android {
 
 dependencies {
 
+    implementation(project(":core:data"))
+    implementation(project(":core:models"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(project(":core:data"))
+    implementation(project(":core:network"))
+    implementation(project(":core:models"))
+    implementation(project(":presentation:home"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -70,11 +79,11 @@ dependencies {
     implementation(libs.kotlin.coroutines)
     testImplementation(libs.kotlin.coroutines.test)
 
-
     //navigation
     implementation(libs.androidx.navigation.compose)
 
     //hilt
     implementation(libs.hilt.navigation.compose)
-
+    implementation(libs.hilt)
+    ksp(libs.hilt.compiler)
 }

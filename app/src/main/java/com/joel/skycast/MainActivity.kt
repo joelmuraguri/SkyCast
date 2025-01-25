@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import com.joel.skycast.navigation.BottomNavigationBar
 import com.joel.skycast.navigation.SkyCastNavGraph
@@ -60,11 +61,11 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
 
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     bottomBar = { if (bottomBarState.value) BottomNavigationBar(navController) },
-                    snackbarHost = { SnackbarHost(snackbarHostState) }
+                    snackbarHost = { SnackbarHost(snackbarHostState) },
+                    containerColor = Color(0xFF142036)
                 ) { padding ->
                     Column(
                         modifier = Modifier
@@ -72,6 +73,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         SkyCastNavGraph(
                             navHostController = navController,
+                            updateBottomBarState = { bottomBarState.value = it }
                         )
                     }
                 }

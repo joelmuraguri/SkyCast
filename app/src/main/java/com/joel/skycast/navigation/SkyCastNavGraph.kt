@@ -16,24 +16,54 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.joel.home.HomeScreen
+import com.joel.locations.LocationDetailsScreen
 import com.joel.locations.LocationsScreen
+import com.joel.models.Place
 import com.joel.settings.SettingsScreen
 import com.joel.skycast.ui.theme.SkyCastTheme
+import kotlin.reflect.typeOf
 
 @Composable
 fun SkyCastNavGraph(
     navHostController: NavHostController,
+    updateBottomBarState: (Boolean) -> Unit
 ) {
     NavHost(navController = navHostController, startDestination = Destinations.Home){
+
         composable<Destinations.Home> {
+            updateBottomBarState(true)
             HomeScreen()
         }
         composable<Destinations.Locations> {
-            LocationsScreen()
+            updateBottomBarState(true)
+            LocationsScreen(
+                onNavigateToDetails = { place ->
+                    navHostController.navigate(Destinations.LocationDetails(place))
+                }
+            )
         }
         composable<Destinations.Settings> {
+            updateBottomBarState(true)
             SettingsScreen()
+        }
+        composable<Destinations.LocationDetails>(
+            typeMap = mapOf(
+                typeOf<Place>() to PlaceNavType.placeType
+            )
+        ) {
+            updateBottomBarState(false)
+            val args = it.toRoute<Destinations.LocationDetails>()
+            LocationDetailsScreen(
+                onCancel = {
+                    navHostController.navigate(Destinations.Locations)
+                },
+                place = args.place,
+                onAdd = {
+
+                },
+            )
         }
     }
 }
@@ -42,7 +72,7 @@ fun SkyCastNavGraph(
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     BottomAppBar(
-        containerColor = Color(0xFF1D1D2A)
+        containerColor = Color(0xFF132847)
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
@@ -57,10 +87,14 @@ fun BottomNavigationBar(navController: NavHostController) {
                     Icon(
                         imageVector = destination.icon,
                         contentDescription = destination.label,
-                        tint = if (isSelected) Color(0xFF5180f1) else Color.White
+                        tint = if (isSelected) Color(0xFFFEB800) else Color(0xFF6C788E)
                     )
                 },
-                label = { Text(text = destination.label) },
+                label = {
+                    Text(
+                        text = destination.label,
+                        color = if (isSelected) Color(0xFFFEB800) else Color(0xFF6C788E)
+                    ) },
                 alwaysShowLabel = true,
                 onClick = {
                     navController.navigate(destination.route) {

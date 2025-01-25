@@ -6,30 +6,30 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GeoCodingResponse(
     @SerialName("generationtime_ms")
-    val generationTimeMs: Double,
-    val results: List<Place>
+    val generationTimeMs: Double ?= null,
+    val results: List<Place> = emptyList()
 ){
     @Serializable
     data class Place(
-        val admin1: String,
+        val admin1: String ?= null,
         @SerialName("admin1_id")
-        val admin1Id: Int,
-        val admin2: String,
+        val admin1Id: Int ?= null,
+        val admin2: String ? = null,
         @SerialName("admin2_id")
-        val admin2Id: Int,
-        val country: String,
+        val admin2Id: Int ?= null,
+        val country: String ?= null,
         @SerialName("country_code")
-        val countryCode: String,
+        val countryCode: String ?= null,
         @SerialName("country_id")
-        val countryId: Int,
-        val elevation: Double,
+        val countryId: Int ?= null,
+        val elevation: Double ?= null,
         @SerialName("feature_code")
-        val featureCode: String,
-        val id: Int,
-        val latitude: Double,
-        val longitude: Double,
-        val name: String,
-        val population: Int,
-        val timezone: String
+        val featureCode: String ?= null,
+        val id: Int ?= null,
+        val latitude: Double ?= null,
+        val longitude: Double ?= null,
+        val name: String ? = null,
+        val population: Int ?= null,
+        val timezone: String ?= null
     )
 }

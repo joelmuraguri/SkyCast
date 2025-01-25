@@ -1,7 +1,9 @@
 package com.joel.home.contents
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -48,7 +50,9 @@ fun HourlyForecast(
         filteredForecasts.add(0, currentHourForecast.copy(temp = currentHourForecast.temp, time = currentHourForecast.time, weather = currentHourForecast.weather))
     }
 
-    LazyRow {
+    LazyRow(
+        contentPadding = PaddingValues(12.dp)
+    ) {
         items(filteredForecasts) { forecast ->
             HourlyItemForecast(hourlyForecast = forecast, currentTime)
         }
@@ -85,33 +89,37 @@ fun HourlyItemForecast(
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         Card(
             elevation = CardDefaults.elevatedCardElevation(
                 defaultElevation = 5.dp,
             ),
-            shape = RoundedCornerShape(4.dp)
+            shape = RoundedCornerShape(4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF132847)
+            )
         ) {
             Icon(
                 painter = painterResource(id = hourlyForecast.weather.iconRes),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(34.dp)
-                    .padding(4.dp)
+                    .size(40.dp)
+                    .padding(4.dp),
+                tint = Color.White
             )
         }
         Text(
             text = displayTime.uppercase(Locale.getDefault()),
-            fontSize = 8.sp
+            fontSize = 10.sp, color = Color.White
         )
 
-        Text(text = "${hourlyForecast.temp}°", fontSize = 8.sp)
+        Text(text = "${hourlyForecast.temp}°", fontSize = 8.sp, color = Color.White)
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun HourlyItemForecastPreview(){
     val hourlyForecast = ForecastInfo.HourlyForecast(

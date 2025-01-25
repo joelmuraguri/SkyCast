@@ -31,20 +31,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joel.home.R
+import com.joel.models.GridItem
+import com.joel.models.GridItemType
 
-data class GridItem(
-    val type: GridItemType,
-    val data: Any? = null // Use this to pass specific data for each type
-)
+//data class GridItem(
+//    val type: GridItemType,
+////    val data: Any? = null // Use this to pass specific data for each type
+////)
 
-enum class GridItemType {
-    Temperature,
-    UVIndex,
-    Humidity,
-    Wind,
-    Precipitation,
-    Pressure
-}
+//enum class GridItemType {
+//    Temperature,
+//    UVIndex,
+//    Humidity,
+//    Wind,
+//    Precipitation,
+//    Pressure
+//}
 
 @Composable
 fun WeatherGridItems(items: List<GridItem>) {
@@ -205,7 +207,6 @@ fun UVIndexIndicator(currentIndex: Int) {
 fun UVIndexIndicatorPreview(){
     MaterialTheme {
         UVIndexIndicator(8)
-
     }
 }
 

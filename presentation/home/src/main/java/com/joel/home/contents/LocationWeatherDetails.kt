@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -36,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joel.home.R
 import com.joel.models.ForecastInfo
+import com.joel.models.GridItem
+import com.joel.models.GridItemType
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -124,10 +126,16 @@ fun MoreWeatherDetails(
             defaultElevation = 5.dp
         ),
         modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 4.dp)
-
+            .padding(horizontal = 14.dp, vertical = 4.dp),
     ){
-        Column {
+        Column(
+            modifier = Modifier
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color(0xFF132847), Color(0xFF142036))
+                    )
+                )
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
@@ -135,14 +143,14 @@ fun MoreWeatherDetails(
                     .padding(14.dp)
             ) {
                 Column() {
-                    Text(text = "$date, $time")
+                    Text(text = "$date, $time", color = Color.White)
                     TemperatureDisplay(
                         temperature = temperature,
                         unit = "°C",
                         temperatureFontSize = 80.sp,
-                        unitFontSize = 24.sp
+                        unitFontSize = 24.sp,
                     )
-                    Text(weather)
+                    Text(weather, color = Color.White)
                 }
                 Icon(
                     painter = painterResource(id = weatherIcon),
@@ -150,7 +158,8 @@ fun MoreWeatherDetails(
                     modifier = Modifier
                         .padding(start = 24.dp)
                         .size(170.dp)
-                        .align(Alignment.CenterVertically)
+                        .align(Alignment.CenterVertically),
+                    tint = Color.White
                 )
             }
             SunriseSunsetDisplay(sunrise, sunset, dayDuration, nightDuration, currentTime, isDayTime)
@@ -172,23 +181,33 @@ fun LessWeatherDetails(
             defaultElevation = 5.dp
         ),
         modifier = Modifier
-            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .padding(horizontal = 14.dp, vertical = 4.dp),
+        colors = CardDefaults
+            .cardColors(
+                containerColor = Color.Transparent
+            )
     ) {
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color(0xFF132847), Color(0xFF142036))
+                    )
+                )
                 .padding(14.dp)
         ) {
             Column() {
-                Text(text = "$date, $time")
+                Text(text = "$date, $time", color = Color.White)
                 TemperatureDisplay(
                     temperature = temperature,
                     unit = "°C",
                     temperatureFontSize = 80.sp,
                     unitFontSize = 24.sp
                 )
-                Text(weather)
+                Text(weather, color = Color.White)
             }
             Icon(
                 painter = painterResource(id = weatherIcon),
@@ -196,7 +215,8 @@ fun LessWeatherDetails(
                 modifier = Modifier
                     .padding(start = 24.dp)
                     .size(170.dp)
-                    .align(Alignment.CenterVertically)
+                    .align(Alignment.CenterVertically),
+                tint = Color.White
             )
         }
     }
@@ -369,7 +389,8 @@ fun TemperatureDisplay(temperature: Int, unit: String, temperatureFontSize: Text
     ) {
         Text(
             text = "$temperature",
-            fontSize = temperatureFontSize
+            fontSize = temperatureFontSize,
+            color = Color.White
         )
         Spacer(modifier = Modifier.width(4.dp))
         Box(
@@ -378,14 +399,15 @@ fun TemperatureDisplay(temperature: Int, unit: String, temperatureFontSize: Text
         ) {
             Text(
                 text = unit,
-                fontSize = unitFontSize
+                fontSize = unitFontSize,
+                color = Color.White
             )
         }
     }
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun TemperatureDisplayPreview() {
     MaterialTheme {

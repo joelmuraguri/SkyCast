@@ -10,7 +10,8 @@ data class FavouritePlace(
     @PrimaryKey val locationName : String,
     val country : String,
     val timeZone : String,
-    val countryCode : String
+    val countryCode : String,
+    val admin : String
 )
 
 

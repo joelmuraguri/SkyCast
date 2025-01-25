@@ -69,6 +69,7 @@ dependencies {
 
     implementation(project(":core:sync"))
     implementation(project(":core:network"))
+    implementation(project(":core:models"))
     implementation(project(":presentation:home"))
     implementation(project(":presentation:locations"))
     implementation(project(":presentation:settings"))

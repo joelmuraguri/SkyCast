@@ -1,5 +1,7 @@
 package com.joel.models
 
+import kotlinx.serialization.Serializable
+
 data class WeatherDomain(
     val location : Location,
     val dailyForeCast : List<Daily>,
@@ -28,6 +30,7 @@ data class WeatherDomain(
     )
 }
 
+@Serializable
 data class Location(
     val longitude : Double,
     val latitude : Double

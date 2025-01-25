@@ -14,6 +14,7 @@ import com.joel.data.repository.location.LocationClient
 import com.joel.database.dao.ForecastDao
 import com.joel.network.Dispatcher
 import com.joel.network.SkyCastDispatchers
+import com.joel.network.client.GeoClient
 import com.joel.network.client.ReverseGeoClient
 import com.joel.network.client.WeatherClient
 import com.skydoves.sandwich.suspendOnSuccess
@@ -31,7 +32,8 @@ class SyncWorker @AssistedInject constructor(
     private val forecastDao: ForecastDao,
     private val client: WeatherClient,
     private val reverseGeoClient : ReverseGeoClient,
-    private val locationClient: LocationClient
+    private val locationClient: LocationClient,
+    private val geoClient: GeoClient
 ) : CoroutineWorker(appContext, workerParams) {
 
     init {
@@ -69,6 +71,9 @@ class SyncWorker @AssistedInject constructor(
                     Log.d(SYNC_WORK_NAME, "---------------------> Success: $data")
                     forecastDao.deleteWeather()
                     forecastDao.insertWeather(data.asEntity(System.currentTimeMillis(), locationName))
+                }
+                geoClient.locationSearch("").suspendOnSuccess {
+                   val a = data.results
                 }
             }
             Log.d(SYNC_WORK_NAME, "--------------------------------> Work completed successfully")
