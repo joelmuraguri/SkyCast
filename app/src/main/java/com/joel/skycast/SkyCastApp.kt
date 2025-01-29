@@ -1,10 +1,9 @@
 package com.joel.skycast
 
 import android.app.Application
-import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.joel.sync.worker.SYNC_WORK_NAME
+import com.google.firebase.FirebaseApp
 import com.joel.sync.worker.WorkerInitializer
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -17,6 +16,7 @@ class SkyCastApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        FirebaseApp.initializeApp(this)
         WorkerInitializer.initialize(this)
     }
 

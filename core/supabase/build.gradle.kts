@@ -1,14 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.google.gms.google.services)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
-    alias(libs.plugins.serialization)
 }
 
 android {
-    namespace = "com.joel.firebase"
+    namespace = "com.joel.supabase"
     compileSdk = 34
 
     defaultConfig {
@@ -41,16 +37,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    //coroutines
-    implementation(libs.kotlin.coroutines)
-    testImplementation(libs.kotlin.coroutines.test)
-
-    //hilt
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
 }
