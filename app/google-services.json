@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1009999985344",
+    "project_id": "skycast-f1655",
+    "storage_bucket": "skycast-f1655.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009999985344:android:9765e1508eb483d49a4b25",
+        "android_client_info": {
+          "package_name": "com.joe.skycast"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009999985344-qhjopskeldt5gquv7aeafpuq3c00hk6e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joe.skycast",
+            "certificate_hash": "6199f8ab9eda98f4b61835da82bac60bbca731e5"
+          }
+        },
+        {
+          "client_id": "1009999985344-ua8i01khqson68ec6qmd95mm2l56t2ot.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joe.skycast",
+            "certificate_hash": "1429d1fde7a6b0bcc5dcbe83d57a2b80231fce83"
+          }
+        },
+        {
+          "client_id": "1009999985344-ibl352q3rff04m8pbg50hm7ednq6ue00.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTsGFYTH4Z9R53O9hM3MFTpzHDQCmq21w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1009999985344-ibl352q3rff04m8pbg50hm7ednq6ue00.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

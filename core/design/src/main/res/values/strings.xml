@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="request_locations_permission">Request permission</string>
+    <string name="locations_permission_title">Notification permission</string>
+    <string name="locations_permission_description">The notification permission is important for this app. Please grant the permission.</string>
+</resources>
