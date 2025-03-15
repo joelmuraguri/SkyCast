@@ -8,8 +8,8 @@ plugins {
 }
 
 android {
-    namespace = "com.joel.database"
-    compileSdk = 34
+    namespace = "com.joe.database"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

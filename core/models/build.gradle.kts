@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    namespace = "com.joel.models"
-    compileSdk = 34
+    namespace = "com.joe.models"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

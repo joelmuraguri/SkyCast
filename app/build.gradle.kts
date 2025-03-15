@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.serialization)
@@ -10,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "com.joel.skycast"
-    compileSdk = 34
+    namespace = "com.joe.skycast"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.joel.skycast"
+        applicationId = "com.joe.skycast"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -29,9 +30,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("release-key.jks")
-            storePassword = "joel2024"
+            storePassword = "joel2025"
             keyAlias = "my-key-alias"
-            keyPassword = "joel2024"
+            keyPassword = "joel2025"
         }
     }
 
@@ -85,6 +86,14 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.play.services.auth)
+    implementation(project(":core:firebase"))
+    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -108,6 +117,4 @@ dependencies {
     androidTestImplementation(libs.androidx.work.testing)
 
     implementation(libs.kotlinx.serialization.json)
-
-
 }

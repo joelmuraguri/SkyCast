@@ -6,8 +6,8 @@ plugins {
 }
 
 android {
-    namespace = "com.joel.sync"
-    compileSdk = 34
+    namespace = "com.joe.sync"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

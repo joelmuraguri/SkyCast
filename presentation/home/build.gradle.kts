@@ -2,12 +2,14 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.compose)
+
 
 }
 
 android {
-    namespace = "com.joel.home"
-    compileSdk = 34
+    namespace = "com.joe.home"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

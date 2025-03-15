@@ -1,0 +1,42 @@
+package com.joe.data.repository.forecast
+
+import android.util.Log
+import androidx.annotation.WorkerThread
+import com.joe.data.mappers.asDomain
+import com.joe.database.dao.ForecastDao
+import com.joe.models.WeatherDomain
+import com.joe.network.Dispatcher
+import com.joe.network.SkyCastDispatchers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import javax.inject.Inject
+
+
+
+class ForecastRepositoryImpl @Inject constructor(
+    private val forecastDao: ForecastDao,
+    @Dispatcher(SkyCastDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+) : ForecastRepository {
+
+    @WorkerThread
+    override fun fetchWeatherForecast(
+        onStart: () -> Unit,
+        onComplete: () -> Unit,
+        onError: (String?) -> Unit
+    ): Flow<WeatherDomain> = flow {
+        try {
+            forecastDao.getWeather().collect { weatherEntity ->
+                    emit(weatherEntity.asDomain())
+                    Log.d("CACHED DATA:", "-------> ${weatherEntity.asDomain()}")
+            }
+            onComplete()
+        } catch (e: Exception) {
+            onError(e.message)
+        }
+    }.onStart { onStart() }.onCompletion { onComplete() }.flowOn(ioDispatcher)
+
+}

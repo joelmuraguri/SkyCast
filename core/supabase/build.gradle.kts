@@ -4,8 +4,8 @@ plugins {
 }
 
 android {
-    namespace = "com.joel.supabase"
-    compileSdk = 34
+    namespace = "com.joe.supabase"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24

@@ -1,0 +1,20 @@
+package com.joe.database.dao
+
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import com.joe.database.entity.FavouritePlace
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface FavouriteDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertFavourite(favouritePlace: FavouritePlace)
+
+    @Query("SELECT * FROM favourite_place")
+    fun getFavourites(): Flow<List<FavouritePlace>>
+
+    @Query("DELETE FROM favourite_place WHERE locationName = :locationName")
+    suspend fun deleteFavourites(locationName: String)
+}

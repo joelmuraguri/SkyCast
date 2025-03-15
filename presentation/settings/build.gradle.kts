@@ -1,11 +1,13 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+
 }
 
 android {
-    namespace = "com.joel.settings"
-    compileSdk = 34
+    namespace = "com.joe.settings"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
@@ -41,6 +43,10 @@ android {
 
 dependencies {
 
+    implementation(project(":core:design"))
+    implementation(project(":core:firebase"))
+
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -63,11 +69,13 @@ dependencies {
     implementation(libs.kotlin.coroutines)
     testImplementation(libs.kotlin.coroutines.test)
 
-
     //navigation
     implementation(libs.androidx.navigation.compose)
 
     //hilt
     implementation(libs.hilt.navigation.compose)
+
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
 
 }

@@ -7,8 +7,8 @@ plugins {
 }
 
 android {
-    namespace = "com.joel.network"
-    compileSdk = 34
+    namespace = "com.joe.network"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26

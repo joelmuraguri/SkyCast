@@ -2,12 +2,12 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.ksp)
-
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.joel.locations"
-    compileSdk = 34
+    namespace = "com.joe.locations"
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 26
@@ -60,6 +60,9 @@ dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:models"))
     implementation(project(":presentation:home"))
+    implementation(project(":core:firebase"))
+    implementation(project(":core:design"))
+    implementation(libs.play.services.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
