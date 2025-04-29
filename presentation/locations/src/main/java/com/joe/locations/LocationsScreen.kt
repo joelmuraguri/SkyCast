@@ -1,7 +1,7 @@
 package com.joe.locations
 
+import android.app.Activity
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,13 +18,11 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -34,37 +32,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joe.locations.components.EmptyLocationsState
 import com.joe.locations.components.SearchAppBar
-import com.joe.locations.vm.AuthState
-import com.joe.locations.vm.AuthViewModel
 import com.joe.models.Place
 
 @Composable
 fun LocationsScreen(
     viewModel: SearchViewModel = hiltViewModel(),
     onNavigateToDetails: (Place) -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel(),
-    onSignInClick: () -> Unit
+    activity : Activity
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val query by viewModel.query.collectAsState()
 
-    val authState by authViewModel.authState.collectAsStateWithLifecycle()
-    val isAuthenticated by authViewModel.isAuthenticated.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
+    val isAuthenticatedState = viewModel.isAuthenticated.collectAsStateWithLifecycle()
 
-    Log.d("LocationsScreen", "isAuthenticated: $isAuthenticated") // Debug log
 
-    LaunchedEffect(authState) {
-        when (authState) {
-            is AuthState.Error -> {
-                Toast.makeText(context, (authState as AuthState.Error).message, Toast.LENGTH_LONG).show()
-            }
-            is AuthState.Success -> {
-                Toast.makeText(context, "Sign-in successful", Toast.LENGTH_LONG).show()
-            }
-            else -> {}
-        }
-    }
+    Log.d("LocationsScreen", "-----------------> isAuthenticated: $isAuthenticated") // Debug log
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -77,7 +60,9 @@ fun LocationsScreen(
 
         when (uiState) {
             is SearchUiState.Idle -> EmptyLocationsState(
-                onSignInClick = { onSignInClick() },
+                onSignInClick = {
+                    viewModel.googleSignIn(activity)
+                },
                 isAuthenticated = isAuthenticated
             )
             is SearchUiState.Loading -> {

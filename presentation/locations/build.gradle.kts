@@ -51,18 +51,15 @@ android {
 dependencies {
 
     implementation(project(":core:data"))
+    implementation(project(":core:network"))
+    implementation(project(":core:supabase"))
     implementation(project(":core:models"))
+    implementation(project(":presentation:home"))
+    implementation(project(":core:design"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(project(":core:data"))
-    implementation(project(":core:network"))
-    implementation(project(":core:models"))
-    implementation(project(":presentation:home"))
-    implementation(project(":core:firebase"))
-    implementation(project(":core:design"))
-    implementation(libs.play.services.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -1,13 +1,12 @@
 package com.joe.skycast
 
 import android.Manifest
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
@@ -16,16 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
-import com.joe.locations.vm.AuthState
-import com.joe.locations.vm.AuthViewModel
 import com.joe.skycast.navigation.BottomNavigationBar
 import com.joe.skycast.navigation.SkyCastNavGraph
 import com.joe.skycast.ui.theme.SkyCastTheme
@@ -64,50 +59,12 @@ class MainActivity : ComponentActivity() {
         requestPermissions()
         enableEdgeToEdge()
         setContent {
+            val context = LocalContext.current
+            val activity = context as? Activity
 
             SkyCastTheme {
                 val navController = rememberNavController()
-                val authViewModel: AuthViewModel = hiltViewModel()
                 val bottomBarState = rememberSaveable { (mutableStateOf(true)) }
-
-                val authLauncher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.StartIntentSenderForResult(),
-                    onResult = { result ->
-                        Log.d("MAIN ACTIVITY", "-----------> Handling sign-in result")
-                        lifecycleScope.launch {
-                            result.data?.let { intent ->
-                                authViewModel.handleSignInResult(intent)
-                            } ?: Log.e("MAIN ACTIVITY", "-----------------> Sign-in intent data is null")
-                        }
-                    }
-                )
-
-
-                LaunchedEffect(Unit) {
-                    launch {
-                        authViewModel.authState.collect { state ->
-                            when (state) {
-                                is AuthState.SignInRequested -> {
-                                    state.intentSender?.let { intentSender ->
-                                        try {
-                                            authLauncher.launch(IntentSenderRequest.Builder(intentSender).build())
-                                        } catch (e: Exception) {
-                                            Log.e("AUTH_VIEWMODEL", "Error launching sign-in intent: ${e.message}", e)
-                                        }
-                                    } ?: Log.e("AUTH_VIEWMODEL", "Sign-in intent sender is null")
-                                }
-                                is AuthState.Success -> {
-                                    Log.d("AUTH_VIEWMODEL", "Sign-in successful")
-                                }
-                                is AuthState.Error -> {
-                                    Log.e("AUTH_VIEWMODEL", "Sign-in failed: ${state.message}")
-                                }
-                                else -> {}
-                            }
-                        }
-                    }
-                }
-
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -122,9 +79,7 @@ class MainActivity : ComponentActivity() {
                         SkyCastNavGraph(
                             navHostController = navController,
                             updateBottomBarState = { bottomBarState.value = it },
-                            onSignInClick = {
-                                authViewModel.signIn()
-                            }
+                            activity = activity!!
                         )
                     }
                 }

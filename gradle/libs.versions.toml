@@ -44,6 +44,8 @@ firebaseAuth = "23.2.0"
 playServicesBase = "18.5.0"
 firebaseFirestore = "25.1.2"
 lifecycleViewmodelAndroid = "2.8.7"
+ktorClientAndroid = "3.1.1"
+datastoreCoreAndroid = "1.1.4"
 
 
 [libraries]
@@ -104,6 +106,8 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
+androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 
 
 [plugins]

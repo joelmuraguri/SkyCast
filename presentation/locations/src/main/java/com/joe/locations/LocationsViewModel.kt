@@ -1,19 +1,28 @@
 package com.joe.locations
 
+import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joe.data.repository.location.LocationRepository
 import com.joe.models.Place
+import com.joe.supabase.auth.AuthResponse
+import com.joe.supabase.auth.AuthService
+import com.muraguri.design.SkyCastEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val locationRepository: LocationRepository
+    private val locationRepository: LocationRepository,
+    private val authService : AuthService,
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -21,6 +30,17 @@ class SearchViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
     val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
+
+    private val _uiEvents = Channel<SkyCastEvents>()
+    val uiEvents = _uiEvents.receiveAsFlow()
+
+    private val _isAuthenticated = MutableStateFlow(false)
+    val isAuthenticated = _isAuthenticated.asStateFlow()
+
+    init {
+        _isAuthenticated.value = authService.isUserAuthenticated()
+    }
+
 
     fun updateQuery(newQuery: String) {
         _query.value = newQuery
@@ -55,8 +75,28 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
-}
 
+    fun googleSignIn(activity : Activity){
+        viewModelScope.launch{
+            authService.googleSignIn(activity).collect{
+                when(it){
+                    is AuthResponse.Error -> {
+                        Log.e(LOCATION_VIEWMODEL_TAG, "Google Sign In Failed: ${it.message}")
+                        _uiEvents.send(SkyCastEvents.ShowSnackbar("Google Sign In Failed: ${it.message}"))
+                    }
+                    AuthResponse.Success -> {
+                        _uiEvents.send(SkyCastEvents.ShowSnackbar("Sign In Successful!"))
+                        _isAuthenticated.value = true
+                    }
+                }
+            }
+        }
+    }
+
+    companion object{
+        const val LOCATION_VIEWMODEL_TAG = "LocationViewModel"
+    }
+}
 
 sealed class SearchUiState {
     data object Idle : SearchUiState()

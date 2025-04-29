@@ -2,6 +2,7 @@ package com.joe.locations.components
 
 import android.content.res.Configuration
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,11 +27,17 @@ import com.muraguri.design.widgets.GoogleButton
 
 @Composable
 fun EmptyLocationsState(
-    isAuthenticated: Boolean,
+    isAuthenticatedState: State<Boolean>,
     onSignInClick: () -> Unit,
 ) {
 
+    val isAuthenticated = isAuthenticatedState.value
+
     Log.d("EmptyLocationsState", "isAuthenticated: $isAuthenticated") // Debug log
+    LaunchedEffect(isAuthenticated) {
+        Log.d("EmptyLocationsState", "-------------------> Recomposed with isAuthenticated = $isAuthenticated")
+    }
+
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -55,33 +64,27 @@ fun EmptyLocationsState(
             textAlign = TextAlign.Center
         )
 
-        if(!isAuthenticated){
+        AnimatedVisibility (visible = !isAuthenticated) {
             GoogleButton {
                 onSignInClick()
             }
         }
+
+//        if(!isAuthenticated){
+//            GoogleButton {
+//                onSignInClick()
+//            }
+//        }
     }
-
-
-//    if (isAuthenticated) {
-//
-//    } else {
-//        Log.d("EmptyLocationsState", "------------------> Showing GoogleOauthDialog") // Debug log
-//        GoogleOauthDialog(
-//            onSignInClick = onSignInClick,
-//            onDismissRequest = onDismissRequest,
-//            showDialog = !isAuthenticated // Fix: Show dialog when not authenticated
-//        )
-//    }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun IdleStatePreview() {
     MaterialTheme {
-        EmptyLocationsState(
-            onSignInClick = {},
-            isAuthenticated = false
-        )
+//        EmptyLocationsState(
+//            onSignInClick = {},
+//            isAuthenticated = TODO()
+//        )
     }
 }

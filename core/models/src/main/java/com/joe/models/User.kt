@@ -1,12 +1,10 @@
 package com.joe.models
 
-import android.net.Uri
-
 data class User(
-    val userId : String ?= "",
-    val name : String ?= "",
-    val profileUrl : Uri?= null,
-    val email : String ?= ""
+    val uid : String,
+    val name : String,
+    val email : String,
+    val profileUrl : String? = "",
 )
 
 

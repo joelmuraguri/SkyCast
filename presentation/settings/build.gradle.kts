@@ -44,7 +44,6 @@ android {
 dependencies {
 
     implementation(project(":core:design"))
-    implementation(project(":core:firebase"))
 
 
     implementation(libs.androidx.core.ktx)
