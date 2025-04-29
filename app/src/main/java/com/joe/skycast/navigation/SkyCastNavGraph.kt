@@ -1,5 +1,6 @@
 package com.joe.skycast.navigation
 
+import android.app.Activity
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -27,7 +28,7 @@ import kotlin.reflect.typeOf
 fun SkyCastNavGraph(
     navHostController: NavHostController,
     updateBottomBarState: (Boolean) -> Unit,
-    onSignInClick: () -> Unit
+    activity : Activity
 ) {
     NavHost(navController = navHostController, startDestination = Destinations.Home){
 
@@ -41,7 +42,7 @@ fun SkyCastNavGraph(
                 onNavigateToDetails = { place ->
                     navHostController.navigate(Destinations.LocationDetails(place))
                 },
-                onSignInClick = onSignInClick
+                activity = activity
             )
         }
         composable<Destinations.Settings> {
@@ -78,7 +79,6 @@ fun BottomNavigationBar(navController: NavHostController) {
         val currentDestination = navBackStackEntry?.destination
 
         BottomNavigation.entries.forEach { destination ->
-//            val selected = currentDestination?.hierarchy?.any { it.route == destination.route } == true
             val isSelected = currentDestination?.hierarchy?.any { it.route == destination.route::class.qualifiedName } == true
 
             NavigationBarItem(

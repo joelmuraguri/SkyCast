@@ -1,7 +1,6 @@
 package com.joe.settings
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
@@ -15,37 +14,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.joe.firebase.account.AuthCredentialManager
-import com.joe.firebase.account.AuthResponse
 import com.muraguri.design.widgets.AuthPromptDialog
 import com.muraguri.design.widgets.CustomDialog
-import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen() {
     val context = LocalContext.current
-    val authenticationManager = remember { AuthCredentialManager(context) }
+//    val authenticationManager = remember { AuthCredentialManager(context) }
     val scope = rememberCoroutineScope()
 
-    WeatherApp(
-        signIn = {
-            scope.launch {
-                authenticationManager.signInWithCredentialManager()
-                    .collect { response ->
-                        when (response) {
-                            is AuthResponse.Success -> {
-                                Toast.makeText(context, "Successful Sign In", Toast.LENGTH_SHORT).show()
-                                authenticationManager.saveUserToFirestore()
-                            }
-                            is AuthResponse.Error -> {
-                                Toast.makeText(context, "Try Again. Unsuccessful Sign In: ${response.message}", Toast.LENGTH_SHORT).show()
-                                Log.e("SettingsScreen", "Sign-in error: ${response.message}")
-                            }
-                        }
-                    }
-            }
-        }
-    )
+   Box(
+       contentAlignment = Alignment.Center,
+       modifier = Modifier.fillMaxSize()
+   ) {
+       Text("SETTINGS")
+   }
 }
 
 //@Composable

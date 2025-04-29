@@ -5,8 +5,8 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.serialization)
-    alias(libs.plugins.google.gms.google.services)
-    alias(libs.plugins.google.firebase.crashlytics)
+//    alias(libs.plugins.google.gms.google.services)
+//    alias(libs.plugins.google.firebase.crashlytics)
 
 }
 
@@ -73,6 +73,7 @@ dependencies {
     implementation(project(":core:sync"))
     implementation(project(":core:network"))
     implementation(project(":core:models"))
+    implementation(project(":core:supabase"))
     implementation(project(":presentation:home"))
     implementation(project(":presentation:locations"))
     implementation(project(":presentation:settings"))
@@ -85,9 +86,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.firebase.crashlytics)
     implementation(libs.play.services.auth)
-    implementation(project(":core:firebase"))
     implementation(libs.androidx.lifecycle.viewmodel.android)
     implementation(libs.androidx.lifecycle.viewmodel.android)
     implementation(libs.firebase.auth)
@@ -117,4 +116,11 @@ dependencies {
     androidTestImplementation(libs.androidx.work.testing)
 
     implementation(libs.kotlinx.serialization.json)
+
+    //supabase
+    implementation(libs.ktor.client.android)
+    implementation(platform("io.github.jan-tennert.supabase:bom:3.1.3"))
+    implementation("io.github.jan-tennert.supabase:auth-kt")
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:storage-kt")
 }

@@ -9,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.joe.skycast" />
-                  <option name="mobileSdkAppId" value="1:1009999985344:android:9765e1508eb483d49a4b25" />
-                  <option name="projectId" value="skycast-f1655" />
-                  <option name="projectNumber" value="1009999985344" />
+                  <option name="appId" value="PLACEHOLDER" />
+                  <option name="mobileSdkAppId" value="" />
+                  <option name="projectId" value="" />
+                  <option name="projectNumber" value="" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
