@@ -1,12 +1,16 @@
 package com.joe.locations.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,6 +31,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,53 +39,67 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchAppBar(
-    value : String,
-    onValueChange : (String) -> Unit,
-    isEmpty : Boolean
+    value: String,
+    onValueChange: (String) -> Unit,
+    isEmpty: Boolean,
+    onCancel: () -> Unit
 ) {
     Column {
-        if(!isEmpty){
-            Box(
-                contentAlignment = Alignment.TopStart,
-                modifier = Modifier
-                    .fillMaxWidth()
-
-            ) {
-                CenterAlignedTopAppBar(
-                    title = {
+        if (!isEmpty) {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = "My Locations",
+                        fontSize = 18.sp
+                    )
+                },
+                actions = {
+                    TextButton(onClick = { /*TODO*/ }) {
                         Text(
-                            text = "My Locations",
-                            fontSize = 18.sp
+                            text = "Edit",
+                            color = Color(0xFFFEB800),
+                            fontSize =20.sp,
+                            fontWeight = FontWeight.ExtraBold
                         )
-                    },
-                    actions = {
-                        TextButton(onClick = { /*TODO*/ }) {
-                            Text(
-                                text = "Edit",
-                                color = Color(0xFFFEB800),
-                                fontSize = 16.sp
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color(0xFF142036)
-                    ),
-                    modifier = Modifier
-                        .height(65.dp)
-                )
-            }
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color(0xFF142036)
+                ),
+                modifier = Modifier.height(65.dp)
+            )
         }
-        SearchBar(
-            hint = "Find locations...",
-            value = value,
-            onValueChange = {
-                onValueChange(it)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
 
+        Row(
+            modifier = Modifier
+                .animateContentSize()// Smooth resize
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val shrinkModifier = if (value.isNotBlank()) {
+                Modifier.weight(1f)
+            } else Modifier.fillMaxWidth()
+
+            SearchBar(
+                hint = "Find locations...",
+                value = value,
+                onValueChange = onValueChange,
+                modifier = shrinkModifier
+            )
+
+            if (value.isNotBlank()) {
+                Spacer(modifier = Modifier.width(8.dp))
+                TextButton(onClick = {
+                    onCancel()
+                }) {
+                    Text(
+                        text = "Cancel",
+                        color = Color(0xFFFEB800),
+                        fontSize =20.sp,
+                        fontWeight = FontWeight.ExtraBold                    )
+                }
+            }
         }
     }
 }
