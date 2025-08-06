@@ -93,7 +93,7 @@ fun TemperatureItem(highTemp: String, lowTemp: String) {
         modifier = Modifier
             .padding(8.dp)
     ) {
-        Text(text = "Feels Like")
+        Text(text = "Feels Like", color =Color.White )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -104,17 +104,19 @@ fun TemperatureItem(highTemp: String, lowTemp: String) {
                 painter = painterResource(id = R.drawable.high),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(14.dp)
+                    .size(14.dp),
+                tint = Color.White
             )
-            Text(text = highTemp, style = MaterialTheme.typography.labelSmall)
+            Text(text = highTemp, style = MaterialTheme.typography.labelSmall,  color =Color.White)
             Spacer(modifier = Modifier.width(3.dp))
             Icon(
                 painter = painterResource(id = R.drawable.low),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(14.dp)
-                )
-            Text(text = lowTemp, style = MaterialTheme.typography.labelSmall)
+                    .size(14.dp),
+                tint = Color.White
+            )
+            Text(text = lowTemp, style = MaterialTheme.typography.labelSmall, color =Color.White)
         }
     }
 }

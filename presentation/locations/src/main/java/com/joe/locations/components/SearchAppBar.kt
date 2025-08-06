@@ -58,7 +58,7 @@ fun SearchAppBar(
                         Text(
                             text = "Edit",
                             color = Color(0xFFFEB800),
-                            fontSize =20.sp,
+                            fontSize = 18.sp,
                             fontWeight = FontWeight.ExtraBold
                         )
                     }

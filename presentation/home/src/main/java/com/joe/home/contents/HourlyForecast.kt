@@ -106,7 +106,7 @@ fun HourlyItemForecast(
                 modifier = Modifier
                     .size(40.dp)
                     .padding(4.dp),
-                tint = Color.White
+//                tint = Color.White
             )
         }
         Text(

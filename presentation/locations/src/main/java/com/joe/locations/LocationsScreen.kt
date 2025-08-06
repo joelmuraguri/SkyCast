@@ -25,14 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.joe.locations.components.EmptyLocationsState
+import com.joe.locations.components.LocationItemCard
 import com.joe.locations.components.SearchAppBar
 import com.joe.models.Place
+import com.joe.models.WeatherType
 
 @Composable
 fun LocationsScreen(
@@ -42,12 +44,13 @@ fun LocationsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val query by viewModel.query.collectAsState()
+    val favourites by viewModel.favourites.collectAsState()
+    val favouritesLoading by viewModel.favouritesLoading.collectAsStateWithLifecycle()
+
+
 
     val isAuthenticated by viewModel.isAuthenticated.collectAsStateWithLifecycle()
-    val isAuthenticatedState = viewModel.isAuthenticated.collectAsStateWithLifecycle()
 
-
-    Log.d("LocationsScreen", "-----------------> isAuthenticated: $isAuthenticated") // Debug log
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -55,16 +58,54 @@ fun LocationsScreen(
         SearchAppBar(
             isEmpty = false,
             value = query,
-            onValueChange = { viewModel.updateQuery(it) }
+            onValueChange = { viewModel.updateQuery(it) },
+            onCancel = {
+                viewModel.updateQuery("")
+            }
         )
 
         when (uiState) {
-            is SearchUiState.Idle -> EmptyLocationsState(
-                onSignInClick = {
-                    viewModel.googleSignIn(activity)
-                },
-                isAuthenticated = isAuthenticated
-            )
+            is SearchUiState.Idle -> {
+                if (favouritesLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color(0xFF142036)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                } else {
+                    if (isAuthenticated) {
+                        if (favourites.isNotEmpty()) {
+                            LazyColumn(
+                                modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(favourites) { favorite ->
+                                LocationItemCard(
+                                    time = favorite.time,
+                                    locationName = favorite.locationName,
+                                    weatherDescription = favorite.weatherDescription,
+                                    highTemp = favorite.highTemp.toString(),
+                                    lowTemp = favorite.lowTemp.toString(),
+                                    temperature = favorite.currentTemperature,
+                                    weatherIcon = WeatherType.fromWMO(favorite.weatherCode).iconRes
+                                )
+                            }
+                        }
+                        } else {
+                            //Authenticated but no favourites
+                            EmptyLocationsState(onSignInClick = { viewModel.googleSignIn(activity) })
+                        }
+                    } else {
+                        //not authenticated
+                        EmptyLocationsState(onSignInClick = { viewModel.googleSignIn(activity) })
+                    }
+                }
+            }
             is SearchUiState.Loading -> {
                 Box(
                     modifier = Modifier
@@ -86,19 +127,6 @@ fun LocationsScreen(
             is SearchUiState.Error -> {
                 val errorMessage = (uiState as SearchUiState.Error).message
                 ErrorContent(message = errorMessage)
-            }
-            is SearchUiState.Empty -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                ){
-                    Text(
-                        text = "No locations Found", fontSize = 24.sp, color = Color.White,
-                        modifier = Modifier
-                            .padding(10.dp)
-                    )
-                }
             }
         }
     }
@@ -122,17 +150,6 @@ fun ResultsList(
             SearchResultItem(query = query, place = place, onClick = { onItemClick(place) })
         }
     }
-
-//    if (results.isEmpty()) {
-//        Text(
-//            text = "No results found.",
-//            style = MaterialTheme.typography.bodyLarge,
-//            color = MaterialTheme.colorScheme.error,
-//            modifier = Modifier.padding(16.dp)
-//        )
-//    } else {
-//
-//    }
 }
 
 
@@ -161,12 +178,16 @@ fun SearchResultItem(query: String, place: Place, onClick: () -> Unit) {
         Text(
             text = highlightedText,
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
         Text(
             text = place.country,
             style = MaterialTheme.typography.titleLarge,
-            color = Color(0xFF6C788E)
+            color = Color(0xFF6C788E),
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
         )
     }
 }

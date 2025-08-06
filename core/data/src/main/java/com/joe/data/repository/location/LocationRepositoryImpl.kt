@@ -74,6 +74,10 @@ class LocationRepositoryImpl @Inject constructor(
                 geoClient.getLocationAddress(latitude, longitude).suspendOnSuccess {
                     locationName = data.address.suburb ?: data.address.county ?: "__:__"
                 }
+                Log.d(LOCATION_REPOSITORY, "---------------------> LOCATION NAME : $locationName")
+                Log.d(LOCATION_REPOSITORY, "---------------------> LAT : $latitude")
+                Log.d(LOCATION_REPOSITORY, "---------------------> LON : $longitude")
+
                 val weatherDomain = mapResponseToDomain(
                     response = data,
                     timeStamp = System.currentTimeMillis(),
@@ -96,4 +100,9 @@ class LocationRepositoryImpl @Inject constructor(
     private fun mapResponseToDomain(response: ForecastResponse, timeStamp : Long, locationName : String): WeatherDomain {
         return response.asEntity(timestamp = timeStamp, locationName = locationName).asDomain()
     }
+
+    companion object{
+        const val LOCATION_REPOSITORY = "Location Repository"
+    }
+
 }

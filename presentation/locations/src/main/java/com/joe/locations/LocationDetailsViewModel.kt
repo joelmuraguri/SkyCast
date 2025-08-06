@@ -8,21 +8,43 @@ import androidx.lifecycle.viewModelScope
 import com.joe.data.mappers.asPresentation
 import com.joe.data.repository.location.LocationRepository
 import com.joe.models.ForecastInfo
+import com.joe.models.Place
+import com.joe.supabase.auth.AuthResponse
+import com.joe.supabase.favourites.FavouritesService
+import com.muraguri.design.SkyCastEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
 class LocationDetailsViewModel @Inject constructor(
     private val locationRepository: LocationRepository,
+    private val favouritesService: FavouritesService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val latitude: Double = savedStateHandle["latitude"] ?: 0.0
-    private val longitude: Double = savedStateHandle["longitude"] ?: 0.0
+//    private val latitude: Double = savedStateHandle["latitude"] ?: 0.0
+//    private val longitude: Double = savedStateHandle["longitude"] ?: 0.0
+
+    private val place: Place = Json.decodeFromString(
+        savedStateHandle.get<String>("place")
+            ?: throw IllegalArgumentException("Missing navigation argument: place")
+    )   ?: throw IllegalArgumentException("Missing navigation argument: place")
+
+    private val latitude = place.location.latitude
+    private val longitude = place.location.longitude
+
+
+    private val _uiEvents = Channel<SkyCastEvents>()
+    val uiEvents = _uiEvents.receiveAsFlow()
+
 
     val forecastInfoState: StateFlow<DetailsUiState> =
         locationRepository.fetchLocationForecast(
@@ -40,10 +62,33 @@ class LocationDetailsViewModel @Inject constructor(
             initialValue = DetailsUiState.Loading,
         )
 
+
+
     fun onEvents(events: DetailsEvents) {
         when (events) {
-            DetailsEvents.onAdd -> {
-                // Handle add event
+            is DetailsEvents.OnAdd -> {
+                viewModelScope.launch {
+                    val state = forecastInfoState.value
+                    if (state is DetailsUiState.Success) {
+                        val forecastInfo = state.forecastInfo
+                        favouritesService.createFavouriteLocation(forecastInfo, cityName = events.cityName, timeZone = events.timeZone)
+                            .collect { response ->
+                                when (response) {
+                                    is AuthResponse.Success -> {
+                                        Log.d("FAVOURITE", "----------------> Successfully saved to Supabase")
+                                        _uiEvents.send(SkyCastEvents.ShowSnackbar("Successfully saved to Supabase"))
+                                    }
+                                    is AuthResponse.Error -> {
+                                        Log.e("FAVOURITE", "---------------> Error saving: ${response.message}")
+                                        _uiEvents.send(SkyCastEvents.ShowSnackbar("Error saving: ${response.message}"))
+                                    }
+                                }
+                            }
+                    } else {
+                        Log.w("FAVOURITE", "ForecastInfo not available yet.")
+                    }
+                    _uiEvents.send(SkyCastEvents.PopBackStack)
+                }
             }
         }
     }
@@ -51,7 +96,10 @@ class LocationDetailsViewModel @Inject constructor(
 
 
 sealed class DetailsEvents{
-    data object onAdd : DetailsEvents()
+    data class OnAdd(
+        val cityName : String,
+        val timeZone : String
+    ) : DetailsEvents()
 }
 
 @Stable

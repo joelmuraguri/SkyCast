@@ -74,4 +74,7 @@ dependencies {
 
     //hilt
     implementation(libs.hilt.navigation.compose)
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.2.2")
 }

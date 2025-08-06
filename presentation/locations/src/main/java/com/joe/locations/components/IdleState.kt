@@ -3,6 +3,9 @@ package com.joe.locations.components
 import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,15 +26,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.joe.locations.SearchViewModel
 import com.muraguri.design.widgets.GoogleButton
 
 @Composable
 fun EmptyLocationsState(
-    isAuthenticatedState: State<Boolean>,
     onSignInClick: () -> Unit,
+    searchViewModel: SearchViewModel = hiltViewModel()
 ) {
 
-    val isAuthenticated = isAuthenticatedState.value
+    val isAuthenticated by searchViewModel.isAuthenticated.collectAsStateWithLifecycle()
 
     Log.d("EmptyLocationsState", "isAuthenticated: $isAuthenticated") // Debug log
     LaunchedEffect(isAuthenticated) {
@@ -64,17 +70,16 @@ fun EmptyLocationsState(
             textAlign = TextAlign.Center
         )
 
-        AnimatedVisibility (visible = !isAuthenticated) {
+        AnimatedVisibility(
+            visible = !isAuthenticated,
+            modifier = Modifier.animateContentSize().then(Modifier),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             GoogleButton {
                 onSignInClick()
             }
         }
-
-//        if(!isAuthenticated){
-//            GoogleButton {
-//                onSignInClick()
-//            }
-//        }
     }
 }
 
@@ -82,9 +87,8 @@ fun EmptyLocationsState(
 @Composable
 fun IdleStatePreview() {
     MaterialTheme {
-//        EmptyLocationsState(
-//            onSignInClick = {},
-//            isAuthenticated = TODO()
-//        )
+        EmptyLocationsState(
+            onSignInClick = {},
+        )
     }
 }

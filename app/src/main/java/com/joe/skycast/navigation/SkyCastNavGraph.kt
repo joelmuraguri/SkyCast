@@ -58,11 +58,14 @@ fun SkyCastNavGraph(
             val args = it.toRoute<Destinations.LocationDetails>()
             LocationDetailsScreen(
                 onCancel = {
-                    navHostController.navigate(Destinations.Locations)
+                    navHostController.popBackStack()
                 },
                 place = args.place,
                 onAdd = {
 
+                },
+                popBackStack = {
+                    navHostController.popBackStack()
                 },
             )
         }

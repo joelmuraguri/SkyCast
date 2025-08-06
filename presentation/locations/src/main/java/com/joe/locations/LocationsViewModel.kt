@@ -6,15 +6,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joe.data.repository.location.LocationRepository
 import com.joe.models.Place
+import com.joe.models.WeatherDomain
 import com.joe.supabase.auth.AuthResponse
 import com.joe.supabase.auth.AuthService
+import com.joe.supabase.favourites.FavouriteLocation
+import com.joe.supabase.favourites.FavouritesService
 import com.muraguri.design.SkyCastEvents
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +28,7 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val locationRepository: LocationRepository,
     private val authService : AuthService,
+    private val favouritesService: FavouritesService
 ) : ViewModel() {
 
     private val _query = MutableStateFlow("")
@@ -37,8 +43,41 @@ class SearchViewModel @Inject constructor(
     private val _isAuthenticated = MutableStateFlow(false)
     val isAuthenticated = _isAuthenticated.asStateFlow()
 
+    private val _favourites = MutableStateFlow<List<FavouriteLocation>>(emptyList())
+    val favourites: StateFlow<List<FavouriteLocation>> = _favourites.asStateFlow()
+
+    private val _favouritesLoading = MutableStateFlow(false)
+    val favouritesLoading: StateFlow<Boolean> = _favouritesLoading.asStateFlow()
+
+    private val _favourites2 = MutableStateFlow<List<FavouriteLocationWithLiveWeather>>(emptyList())
+    val favourites2: StateFlow<List<FavouriteLocationWithLiveWeather>> = _favourites2.asStateFlow()
+
+
+
     init {
         _isAuthenticated.value = authService.isUserAuthenticated()
+
+        Log.d(LOCATION_VIEWMODEL_TAG, "------------------> AUTH STATUS : ${_isAuthenticated.value}")
+        Log.d(LOCATION_VIEWMODEL_TAG, "------------------> AUTH STATUS : ${authService.currentUser}")
+        Log.d(LOCATION_VIEWMODEL_TAG, "------------------> AUTH STATUS : ${authService.currentUserId}")
+
+        if (_query.value.isBlank()) {
+            loadFavourites()
+        }
+    }
+
+    private fun loadFavourites() {
+        viewModelScope.launch {
+            _favouritesLoading.value = true
+            favouritesService.getFavouriteLocations()
+                .catch { e ->
+                    _uiState.value = SearchUiState.Error("Failed to load favourites: ${e.localizedMessage}")
+                }
+                .collect { favourites ->
+                    _favourites.value = favourites
+                    _favouritesLoading.value = false
+                }
+        }
     }
 
 
@@ -47,7 +86,8 @@ class SearchViewModel @Inject constructor(
         if (newQuery.isNotBlank()) {
             performSearch(newQuery)
         } else {
-            _uiState.value = SearchUiState.Idle
+            loadFavourites()
+            _uiState.value = SearchUiState.Idle // Remain idle
         }
     }
 
@@ -67,7 +107,7 @@ class SearchViewModel @Inject constructor(
                     _uiState.value = if (places.isNotEmpty()) {
                         SearchUiState.Success(places)
                     } else {
-                        SearchUiState.Empty
+                        SearchUiState.Idle
                     }
                 }
             } catch (e: Exception) {
@@ -75,6 +115,29 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
+    private fun loadFavourites2() {
+        viewModelScope.launch {
+            _favouritesLoading.value = true
+            favouritesService.getFavouriteLocations()
+                .catch { e ->
+                    _uiState.value = SearchUiState.Error("Failed to load favourites: ${e.localizedMessage}")
+                    _favouritesLoading.value = false
+                }
+                .collect { favs ->
+                    val enriched = favs.map { fav ->
+                        async {
+                            val weather = fetchLiveWeatherForFavourite(fav)
+                            FavouriteLocationWithLiveWeather(fav, weather)
+                        }
+                    }.awaitAll()
+
+                    _favourites2.value = enriched
+                    _favouritesLoading.value = false
+                }
+        }
+    }
+
 
     fun googleSignIn(activity : Activity){
         viewModelScope.launch{
@@ -85,13 +148,34 @@ class SearchViewModel @Inject constructor(
                         _uiEvents.send(SkyCastEvents.ShowSnackbar("Google Sign In Failed: ${it.message}"))
                     }
                     AuthResponse.Success -> {
-                        _uiEvents.send(SkyCastEvents.ShowSnackbar("Sign In Successful!"))
                         _isAuthenticated.value = true
+                        loadFavourites() // this will help trigger recomposition due to favourites state
+                        _uiState.value = SearchUiState.Idle // trigger screen recomposition
+                        _uiEvents.send(SkyCastEvents.ShowSnackbar("Sign In Successful!"))
                     }
                 }
             }
         }
     }
+
+    private suspend fun fetchLiveWeatherForFavourite(fav: FavouriteLocation): WeatherDomain? {
+        return try {
+            var weather: WeatherDomain? = null
+            locationRepository.fetchLocationForecast(
+                latitude = fav.latitude.toDouble(),
+                longitude = fav.longitude.toDouble(),
+                onStart = {},
+                onComplete = {},
+                onError = {}
+            ).collect {
+                weather = it
+            }
+            weather
+        } catch (e: Exception) {
+            null // fallback if something fails
+        }
+    }
+
 
     companion object{
         const val LOCATION_VIEWMODEL_TAG = "LocationViewModel"
@@ -101,7 +185,11 @@ class SearchViewModel @Inject constructor(
 sealed class SearchUiState {
     data object Idle : SearchUiState()
     data object Loading : SearchUiState()
-    data object Empty : SearchUiState()
     data class Success(val results: List<Place>) : SearchUiState()
     data class Error(val message: String) : SearchUiState()
 }
+
+data class FavouriteLocationWithLiveWeather(
+    val favourite: FavouriteLocation,
+    val liveWeather: WeatherDomain? = null
+)

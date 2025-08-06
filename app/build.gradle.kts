@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -10,6 +13,13 @@ plugins {
 
 }
 
+val localProps = Properties().apply {
+    val localFile = rootProject.file("local.properties")
+    if (localFile.exists()) {
+        load(FileInputStream(localFile))
+    }
+}
+
 android {
     namespace = "com.joe.skycast"
     compileSdk = 35
@@ -19,22 +29,35 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        versionName = "beta-1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+
+
     }
 
     signingConfigs {
         create("release") {
-            storeFile = file("release-key.jks")
-            storePassword = "joel2025"
-            keyAlias = "my-key-alias"
-            keyPassword = "joel2025"
+            storeFile = file(localProps["RELEASE_STORE_FILE"] as String)
+            storePassword = localProps["RELEASE_STORE_PASSWORD"] as String
+            keyAlias = localProps["RELEASE_KEY_ALIAS"] as String
+            keyPassword = localProps["RELEASE_KEY_PASSWORD"] as String
         }
     }
+
+
+
+//    signingConfigs {
+//        create("release") {
+//            storeFile = file("release-key.jks")
+//            storePassword = "joel2025"
+//            keyAlias = "my-key-alias"
+//            keyPassword = "joel2025"
+//        }
+//    }
 
     buildTypes {
         release {
@@ -123,4 +146,7 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:auth-kt")
     implementation("io.github.jan-tennert.supabase:postgrest-kt")
     implementation("io.github.jan-tennert.supabase:storage-kt")
+
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.2.2")
 }

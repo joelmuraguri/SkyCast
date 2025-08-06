@@ -159,7 +159,6 @@ fun MoreWeatherDetails(
                         .padding(start = 24.dp)
                         .size(170.dp)
                         .align(Alignment.CenterVertically),
-                    tint = Color.White
                 )
             }
             SunriseSunsetDisplay(sunrise, sunset, dayDuration, nightDuration, currentTime, isDayTime)
@@ -216,7 +215,6 @@ fun LessWeatherDetails(
                     .padding(start = 24.dp)
                     .size(170.dp)
                     .align(Alignment.CenterVertically),
-                tint = Color.White
             )
         }
     }

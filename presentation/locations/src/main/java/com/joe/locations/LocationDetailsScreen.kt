@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import com.joe.home.vm.TimeViewModel
 import com.joe.models.GridItem
 import com.joe.models.GridItemType
 import com.joe.models.Place
+import com.muraguri.design.SkyCastEvents
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,11 +40,25 @@ fun LocationDetailsScreen(
     onAdd : () -> Unit,
     place: Place,
     locationDetailsViewModel : LocationDetailsViewModel = hiltViewModel(),
-    viewModel: TimeViewModel = viewModel()
+    viewModel: TimeViewModel = viewModel(),
+    popBackStack : () -> Unit
 ) {
 
     val currentTime by viewModel.currentTime
     val forecastInfoState by locationDetailsViewModel.forecastInfoState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = true) {
+        locationDetailsViewModel.uiEvents.collect{ events ->
+            when(events){
+                is SkyCastEvents.ShowSnackbar -> {
+
+                }
+                SkyCastEvents.PopBackStack -> {
+                    popBackStack()
+                }
+            }
+        }
+    }
 
 
     when (forecastInfoState) {
@@ -89,7 +105,12 @@ fun LocationDetailsScreen(
                         },
                         actions = {
                             TextButton(
-                                onClick = onAdd
+                                onClick = {
+                                    locationDetailsViewModel.onEvents(DetailsEvents.OnAdd(
+                                        cityName = place.name,
+                                        timeZone = place.timeZone
+                                    ))
+                                }
                             ) {
                                 Text(
                                     "Add", color = Color(0xFFFEB800),
@@ -107,7 +128,7 @@ fun LocationDetailsScreen(
                 }
                 LazyColumn {
                     val gridItems = listOf(
-                        GridItem(GridItemType.Temperature, Pair("30°", "15°")),
+                        GridItem(GridItemType.Temperature, Pair(30, 15)),
                         GridItem(GridItemType.UVIndex, 8),
                         GridItem(GridItemType.Humidity, "70%"),
                         GridItem(GridItemType.Wind, "15 km/h"),
